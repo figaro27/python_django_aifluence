@@ -2,6 +2,7 @@
 
 AIFluence Web Platform
 
-# Platform Installation Guide
+## Platform Installation Guide
 
-# How to run the platform?
+
+## How to run the platform?
