@@ -1,0 +1,14 @@
+ .page {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: center;
+    justify-content: center;
+    min-height: 100%;
+ }
+
+ .btn-userrole.active {
+   background-color: #148c3a !important;
+   border-color: #148c3a !important;
+ }

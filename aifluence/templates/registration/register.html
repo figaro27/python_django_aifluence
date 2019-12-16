@@ -1,0 +1,72 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <script defer src="{% static 'fontawesome/js/all.min.js' %}"></script>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12 mx-auto">
+                    <form action="{% url 'register' %}" method="post" class="card">
+                        {% csrf_token %}
+                        <div class="card-body p-6">
+                            <div class="form-group mb-0">
+                                {{ form.first_name|as_crispy_field }}
+                            </div>
+                            <div class="form-group mb-0">
+                                {{ form.last_name|as_crispy_field }}
+                            </div>
+                            <div class="form-group mb-0">
+                                {{ form.username|as_crispy_field }}
+                            </div>
+                            <div class="form-group mb-0">
+                                {{ form.email|as_crispy_field }}
+                            </div>
+                            <div class="form-group mb-0">
+                                {{ form.password1|as_crispy_field }}
+                            </div>
+                            <div class="form-group mb-0">
+                                {{ form.password2|as_crispy_field }}
+                            </div>
+                            <div class="form-group text-center">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary btn-userrole">
+                                        <input type="radio" name="is_client" id="id_client" value="1" autocomplete="off"> Work as Client
+                                    </label>
+                                    <label class="btn btn-secondary btn-userrole">
+                                        <input type="radio" name="is_client" id="id_influencer" value="0" autocomplete="off"> Work as Influencer
+                                    </label>
+                                </div>
+                                <div class="invalid-feedback">
+                                    You must select one of them!
+                                </div>
+                            </div>
+                            <input type="submit" value="Sign Up" class="btn btn-primary btn-block w-50 m-auto">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        
+        $(document).ready(function(){
+            $().button('toggle');
+
+            $("form").submit(function(event){
+                if (!$("input[name='is_client']:checked").val()) {
+                    $(".invalid-feedback").css('display', 'block')
+                    return false;
+                }
+            })
+        });
+
+    </script>
+</body>
