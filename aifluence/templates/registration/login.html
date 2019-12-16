@@ -1,0 +1,61 @@
+{% load static %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <script defer src="{% static 'fontawesome/js/all.min.js' %}"></script>
+</head>
+<body>
+    <div class="page">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12 mx-auto">
+                    <form class="card" method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="card-body p-6">
+                            <div class="card-title text-center">Login to your AIfluence account</div>
+                            {% if form.errors %}
+                                <p class="text-danger">The username or password you entered was not recognised. Please
+                                    check and try again.</p>
+                            {% endif %}
+                            <div class="form-group">
+                                <label class="form-label">Email address</label>
+                                <input class="form-control" name="username" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">
+                                    Password
+                                </label>
+                                <input type="password" name="password" class="form-control" placeholder="Password">
+                                <div class="text-center text-muted">
+                                    <a href="" class="float-right small">Forgotten your password?</a>
+                                </div>
+                            </div>
+
+                            <br/>
+
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+
+                                <input type="hidden" name="next" value="{{ next }}"/>
+                            </div>
+                            <div class="form-inline">
+                                <label class="custom-control custom-checkbox ">
+                                    <input type="checkbox" class="custom-control-input"/>
+                                    <span class="custom-control-label">Remember me</span>
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="text-center text-muted">
+                        Don't have account yet? <a href="{% url 'register' %}">Sign up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'bootstrap/js/jquery.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    
+</body>
