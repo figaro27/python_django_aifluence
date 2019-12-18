@@ -12,4 +12,10 @@ class User(AbstractUser):
     def __str__(self):
         return self.email
 
+class Account(models.Model):
 
+    user = models.ForeignKey(User, on_delete=CASCADE)
+    instagram_account = models.CharField(max_length=60, null=True, blank=True)
+    facebook_account = models.CharField(max_length=60, null=True, blank=True)
+    twitter_account = models.CharField(max_length=60, null=True, blank=True)
+    linkedin_account = models.CharField(max_length=60, null=True, blank=True)

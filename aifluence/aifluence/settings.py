@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'fontawesome',
     'widget_tweaks',
     'crispy_forms',
-    'users'
+    'users',
+    'invitation'
 ]
 
 MIDDLEWARE = [
@@ -136,4 +137,4 @@ STATICFILES_DIRS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'dashboard/'
+LOGIN_REDIRECT_URL = 'invitation/create'
