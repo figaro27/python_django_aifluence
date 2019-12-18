@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="page">
+    <div class="container center">
+        <form action="{% url 'invitation_create' %}" method="post" class="card">
+            {% csrf_token %}
+            <div class="card-body p-6">
+                <div class="row">
+                    <div class="form-group mb-0 col-6">
+                        {{ form.client_id|as_crispy_field }}
+                    </div>
+                    <div class="form-group mb-0 col-6">
+                        {{ form.campaign_id|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group mb-0 col-6">
+                        {{ form.influencer_account|as_crispy_field }}
+                    </div>
+                    <div class="form-group mb-0 col-6">
+                        {{ form.influencer_platform|as_crispy_field }}
+                    </div>
+                </div>
+            <div>
+            <input type="submit" value="Save" class="btn btn-primary btn-block w-50 m-auto">
+        </form>
+    </div>
+</div>
+{% endblock %}
