@@ -1,0 +1,22 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Campagins</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="mt-5">
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Active Campaigns</a>
+                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Past Campaigns</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">aaaaaaaaa</div>
+            <div class="tab-pane" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">bbbbbbbbb</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

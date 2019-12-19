@@ -11,7 +11,7 @@ def register(request):
         if regform.is_valid():
             user = regform.save(commit = False) 
             user.set_password(regform.cleaned_data.get('password2'))
-            if (request.POST.get('is_client') == 1):
+            if (request.POST.get('is_client') == "1"):
                 user.is_client = True
             else:
                 user.is_influencer = True

@@ -10,6 +10,7 @@ from users.models import Account
 from users.forms import UserCreationForm
 # Create your views here.
 from .forms import InvitationForm
+
 def invitation_create(request):
     if request.method == 'POST':
         form = InvitationForm(request.POST)
@@ -21,7 +22,6 @@ def invitation_create(request):
     return render(request, 'invitation/create.html', {'form': form})
 
 def invitation_influencer(request, invitation_key=None, accepted=None):
-    
     try:
         invitation = Invitation.objects.get(invitation_key=invitation_key)
     except Invitation.DoesNotExist:
