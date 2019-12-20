@@ -16,6 +16,7 @@ def register(request):
             else:
                 user.is_influencer = True
             user.save()   
+            return redirect('login')
     else:
         regform = UserCreationForm()
-    return render(request, 'registration/register.html', {'form': regform})
+        return render(request, 'registration/register.html', {'form': regform})

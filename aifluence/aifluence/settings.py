@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'users',
     'invitation',
-    'dashboard'
+    'dashboard',
+    'campaign'
 ]
 
 MIDDLEWARE = [
