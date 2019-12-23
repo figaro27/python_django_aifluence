@@ -2,12 +2,12 @@
 {% load static %}
 
 {% block actions %}
-    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Create new campaign</a>
+    <a href="{% url 'campaign_create' %}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Create new campaign</a>
 {% endblock %}
 
 {% block list %}
 <table class="table card-table table-borderless table-vcenter mt-3">
-    <tr>
+    <tr class="border-bottom">
         <th class="text-left d-none d-md-table-cell text-nowrap">Brand Name</th>
         <th class="text-left d-none d-md-table-cell text-nowrap">Brand Attributes</th>
         <th class="text-left d-none d-md-table-cell text-nowrap">Campaign Brief</th>
@@ -16,19 +16,19 @@
     </tr>
     <tbody>
         {% for item in object_list %}
-            <tr>
+            <tr class="border-bottom">
                 <td class="text-left d-none d-md-table-cell text-nowrap">{{ item.brand_name }}</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap">{{ item.brand_attributes }}</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap">{{ item.campaign_brief }}</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap">{{ item.campaign_budget }}</td>
                 <td class="text-right d-none d-md-table-cell text-nowrap">
-                    <a href="#" class="btn btn-secondary btn-sm"> Edit</a>
-                    <a href="#" class="btn btn-info btn-sm"> Details </a>
+                    <a href="#" class="btn btn-secondary btn-sm" style="width:120px;"> Send Invitation</a><br/>
+                    <a href="#" class="btn btn-info btn-sm mt-1" style="width:120px;"> View Status </a>
                 </td>
             </tr>
             {% empty %}
             <tr>    
-                <td align="center" colspan="6" class="align-content-center">No campaigns have been created. Would you like to <a href="#" class="add-btn">add a new one?</a></td>
+                <td align="center" colspan="5" class="align-content-center">No campaigns have been created. Would you like to <a href="#" class="add-btn">add a new one?</a></td>
             </tr>
         {% endfor %}
     </tbody>

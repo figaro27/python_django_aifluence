@@ -1,0 +1,300 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Campagins</title>
+{% endblock %}
+{% block extracss %}
+    <link rel="stylesheet" href="{% static 'css/jquery.dropdown.css' %}">
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="page h-100 mt-5 mb-5">
+    <div class="container center">
+        <form action="{% url 'campaign_create' %}" method="post">
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-header">
+                    Brand
+                </div>
+                <div class="card-body p-6">
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.brand_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            <div class="form-group">
+                                <label for="id_brand_categories" class=" requiredField">
+                                    Brand categories<span class="asteriskField">*</span>
+                                </label>
+                                <div id="brand_category_selector">
+                                    <select class="form-control d-none w-100" id="id_brand_categories" multiple>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div id="invalid_brand_category" class="invalid-feedback">
+                                        Please select brand category.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="brand_category" name="brand_category">
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.brand_attributes|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            {{ form.key_selling_point|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <div class="card-header">
+                    Consumer
+                </div>
+                <div class="card-body p-6">
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            <div class="form-group">
+                                <label for="id_age_ranges" class=" requiredField">
+                                    Age range<span class="asteriskField">*</span>
+                                </label>
+                                <div id="age_range_selector">
+                                    <select class="form-control d-none w-100" id="id_age_ranges" multiple>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div id="invalid_age_range" class="invalid-feedback">
+                                        Please select age range.
+                                    </div>
+                                </div>
+                                <input type="hidden" id="age_range" name="age_range">
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            <div class="form-group">
+                                <label for="id_social_statuses" class=" requiredField">
+                                    Social status<span class="asteriskField">*</span>
+                                </label>
+                                <div id="social_status_selector">
+                                    <select class="form-control d-none w-100" id="id_social_statuses" multiple>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div id="invalid_social_status" class="invalid-feedback">
+                                        Please select social status.
+                                    </div>
+                                </div>
+                                <input type="hidden" id="social_status" name="social_status">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            <div class="form-group">
+                                <label for="id_interests" class=" requiredField">
+                                    Interest<span class="asteriskField">*</span>
+                                </label>
+                                <div id="interests_selector">
+                                    <select class="form-control d-none w-100" id="id_interests" multiple>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div id="invalid_interests" class="invalid-feedback">
+                                        Please select interest.
+                                    </div>
+                                </div>
+                                <input type="hidden" id="interests" name="interests">
+                            </div>
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            {{ form.personality|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.profession|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            <div class="form-group">
+                                <label for="id_location" class=" requiredField">
+                                    Location<span class="asteriskField">*</span>
+                                </label>
+                                <div id="location_selector">
+                                    <select class="form-control d-none w-100" id="id_location" multiple>
+                                    </select>
+                                </div>
+                                <div>
+                                    <div id="invalid_location" class="invalid-feedback">
+                                        Please select location.
+                                    </div>
+                                </div>
+                                <input type="hidden" id="location" name="location">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.touchpoint|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-5">
+                <div class="card-header">
+                    Campaign
+                </div>
+                <div class="card-body p-6">
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.campaign_brief|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            {{ form.campaign_kpis|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.campaign_budget|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            {{ form.campaign_currency|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.active_social_media|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            {{ form.previous_marketing_campaigns|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.owned_event|as_crispy_field }}
+                        </div>
+                        <div class="form-group mb-0 col-6">
+                            {{ form.sponsored_event|as_crispy_field }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row p-3 mt-3 justify-content-end">
+                <input type="submit" value="Save" class="btn btn-primary btn-sm col-3">
+                <a href="{% url 'active_campaigns' %}" class="btn btn-secondary btn-block col-3 ml-5"> Back </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script src="{% static 'bootstrap/js/jquery.dropdown.js' %}"></script>
+<script>
+    var brand_categories = [];
+    var age_ranges = [];
+    var interests = [];
+    var locations = [];
+    var social_statuses = [];
+
+    {% for item in brand_categories %}
+        brand_categories.push({'id': '{{item|safe}}', 'name': '{{item|safe}}'});
+    {% endfor %}
+
+    {% for item in age_ranges %}
+        age_ranges.push({'id': '{{item.0}}', 'name': '{{item.1}}'});
+    {% endfor %}
+
+    {% for item in interests %}
+        interests.push({'id': "{{item|safe}}", 'name': "{{item|safe}}"});
+    {% endfor %}
+
+    {% for item in social_statuses %}
+        social_statuses.push({'id': '{{item|safe}}', 'name': '{{item|safe}}'});
+    {% endfor %}
+
+    {% for item in countries %}
+        locations.push({'id': "{{item.0}}", 'name': "{{item.1|safe}}"});
+    {% endfor %}
+    
+    $('#brand_category_selector').dropdown({
+        data: brand_categories,
+        multipleMode: 'label',
+        searchable: true,
+        choice: function () {
+            $("#brand_category").val($('#id_brand_categories').val().toString());
+        }
+    });
+
+    $('#age_range_selector').dropdown({
+        data: age_ranges,
+        multipleMode: 'label',
+        searchable: false,
+        choice: function () {
+            $("#age_range").val($('#id_age_ranges').val().toString());
+        }
+    });
+
+    $('#social_status_selector').dropdown({
+        data: social_statuses,
+        multipleMode: 'label',
+        searchable: false,
+        choice: function () {
+            $("#social_status").val($('#id_social_statuses').val().toString());
+        }
+    });
+
+    $('#location_selector').dropdown({
+        data: locations,
+        multipleMode: 'label',
+        searchable: true,
+        choice: function () {
+            $("#location").val($('#id_location').val().toString());
+        }
+    });
+
+    $('#interests_selector').dropdown({
+        data: interests,
+        multipleMode: 'label',
+        searchable: true,
+        choice: function () {
+            $("#interests").val($('#id_interests').val().toString());
+        }
+    });
+
+    $('form').submit(function(event){
+        var invalid = 0
+        if($('#id_brand_categories').val().length == 0){
+            $('#invalid_brand_category').css('display', 'block');
+            invalid = 1
+        }
+        if($('#id_age_ranges').val().length == 0){
+            $('#invalid_age_range').css('display', 'block');
+            invalid = 1
+        }
+
+        if($('#id_social_statuses').val().length == 0){
+            $('#invalid_social_status').css('display', 'block');
+            invalid = 1
+        }
+        
+        if($('#id_location').val().length == 0){
+            $('#invalid_location').css('display', 'block');
+            invalid = 1
+        }
+
+        if($('#id_interests').val().length == 0){
+            $('#invalid_interests').css('display', 'block');
+            invalid = 1
+        }
+
+        if (invalid == 1) {
+            return false;
+        }
+    });
+
+</script>
+{% endblock %}
