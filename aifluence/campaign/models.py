@@ -13,8 +13,8 @@ class Campaign(models.Model):
         )
     )
     brand_comptetitors = models.CharField(max_length=255)
-    brand_attributes = models.CharField(max_length=255)
-    key_selling_point = models.CharField(max_length=255)
+    brand_attributes = models.TextField(max_length=2000)
+    key_selling_point = models.TextField(max_length=2000)
 
     #Consumer
     age_range = ArrayField(
@@ -39,13 +39,13 @@ class Campaign(models.Model):
             models.CharField(max_length=30, blank=True),
         )
     )
-    touchpoint = models.CharField(max_length=255)
+    touchpoint = models.CharField(max_length=255, null=True, blank=True)
 
     #campaign
-    campaign_brief = models.TextField(max_length=4000)
+    campaign_brief = models.TextField(max_length=2000)
     campaign_budget = models.IntegerField()
     campaign_currency = models.CharField(max_length=3, choices=CONSTANTS.CURRENCY_CHOICES, default="usd")
-    campaign_kpis = models.CharField(max_length=64)
+    campaign_kpis = models.TextField(max_length=2000)
     active_social_media = models.CharField(max_length=64)
     previous_marketing_campaigns = models.CharField(max_length=64)
     owned_event = models.CharField(max_length=64)

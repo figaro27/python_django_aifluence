@@ -15,7 +15,7 @@
         <form action="{% url 'campaign_create' %}" method="post">
             {% csrf_token %}
             <div class="card">
-                <div class="card-header">
+                <div class="card-header font-weight-bold">
                     Brand
                 </div>
                 <div class="card-body p-6">
@@ -49,10 +49,15 @@
                             {{ form.key_selling_point|as_crispy_field }}
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group mb-0 col-6">
+                            {{ form.brand_comptetitors|as_crispy_field }}
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="card mt-5">
-                <div class="card-header">
+                <div class="card-header font-weight-bold">
                     Consumer
                 </div>
                 <div class="card-body p-6">
@@ -60,16 +65,11 @@
                         <div class="form-group mb-0 col-6">
                             <div class="form-group">
                                 <label for="id_age_ranges" class=" requiredField">
-                                    Age range<span class="asteriskField">*</span>
+                                    Age range
                                 </label>
                                 <div id="age_range_selector">
                                     <select class="form-control d-none w-100" id="id_age_ranges" multiple>
                                     </select>
-                                </div>
-                                <div>
-                                    <div id="invalid_age_range" class="invalid-feedback">
-                                        Please select age range.
-                                    </div>
                                 </div>
                                 <input type="hidden" id="age_range" name="age_range">
                             </div>
@@ -77,16 +77,11 @@
                         <div class="form-group mb-0 col-6">
                             <div class="form-group">
                                 <label for="id_social_statuses" class=" requiredField">
-                                    Social status<span class="asteriskField">*</span>
+                                    Social status
                                 </label>
                                 <div id="social_status_selector">
                                     <select class="form-control d-none w-100" id="id_social_statuses" multiple>
                                     </select>
-                                </div>
-                                <div>
-                                    <div id="invalid_social_status" class="invalid-feedback">
-                                        Please select social status.
-                                    </div>
                                 </div>
                                 <input type="hidden" id="social_status" name="social_status">
                             </div>
@@ -121,16 +116,11 @@
                         <div class="form-group mb-0 col-6">
                             <div class="form-group">
                                 <label for="id_location" class=" requiredField">
-                                    Location<span class="asteriskField">*</span>
+                                    Location
                                 </label>
                                 <div id="location_selector">
                                     <select class="form-control d-none w-100" id="id_location" multiple>
                                     </select>
-                                </div>
-                                <div>
-                                    <div id="invalid_location" class="invalid-feedback">
-                                        Please select location.
-                                    </div>
                                 </div>
                                 <input type="hidden" id="location" name="location">
                             </div>
@@ -144,7 +134,7 @@
                 </div>
             </div>
             <div class="card mt-5">
-                <div class="card-header">
+                <div class="card-header font-weight-bold">
                     Campaign
                 </div>
                 <div class="card-body p-6">
@@ -269,20 +259,6 @@
         var invalid = 0
         if($('#id_brand_categories').val().length == 0){
             $('#invalid_brand_category').css('display', 'block');
-            invalid = 1
-        }
-        if($('#id_age_ranges').val().length == 0){
-            $('#invalid_age_range').css('display', 'block');
-            invalid = 1
-        }
-
-        if($('#id_social_statuses').val().length == 0){
-            $('#invalid_social_status').css('display', 'block');
-            invalid = 1
-        }
-        
-        if($('#id_location').val().length == 0){
-            $('#invalid_location').css('display', 'block');
             invalid = 1
         }
 

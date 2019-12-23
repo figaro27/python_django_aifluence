@@ -36,3 +36,7 @@
 .top-header{
   box-shadow: -3px -1px 5px 5px #8eb58e;
 }
+
+label {
+  color: #11689c;
+}
