@@ -19,6 +19,7 @@ from django.contrib.auth.views import LoginView, PasswordResetCompleteView, Pass
 from users.views import register
 from django.views.generic import TemplateView
 from dashboard.views import dashboard
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='layouts/landing.html'), name='home'),
@@ -27,5 +28,6 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('dashboard/', dashboard, name="dashboard"),
     path('invitation/', include('invitation.urls')),
-    path('campaigns/', include('campaign.urls'))
+    path('campaigns/', include('campaign.urls')),
+    path('utils/', include('utils.urls')),
 ]
