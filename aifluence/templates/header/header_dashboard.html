@@ -10,9 +10,11 @@
         </button>
       
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            {% if request.user.is_client %}
+            {% if request.user.is_superuser %}
+                {% include 'menu/menu_admin.html' %}
+            {% elif request.user.is_client %}
                 {% include 'menu/menu_client.html' %}
-            {% else %}
+            {% elif request.user.is_influencer %}
                 {% include 'menu/menu_influencer.html' %}
             {% endif %}
         </div>

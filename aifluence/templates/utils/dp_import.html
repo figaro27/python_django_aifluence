@@ -1,0 +1,36 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-12 mx-auto">
+                <form class="card" method="post" action="{% url 'dp_import' %}" enctype="multipart/form-data">
+                    {% csrf_token %} 
+                    <div class="card-header">
+                        Import DemographicsPro Analysis
+                    </div>
+                    <div class="card-body">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert {% if message.tags %}alert-{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}danger{% else %}{{ message.tags }}{% endif %}{% endif %}" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        <div class="form-group">
+                            <label class="form-label">Analysis File</label>
+                            <input class="form-control" type="file" name="dp_analysis_file" id="dp_analysis_file" accept=".csv" required />
+                        </div>
+                        <hr/>
+                        <div class="form-group">
+                            <button class="form-control btn btn-primary btn-block" type="submit">
+                                Import
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

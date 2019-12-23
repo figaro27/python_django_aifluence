@@ -1,0 +1,14 @@
+{% load static %}
+<ul class="navbar-nav ml-auto">
+    <li class="nav-item">
+        <a class="nav-link {% if menu == 'home' %} active {% endif %}" href="">Home</a>
+    </li>
+    <li class="nav-item dropdown {% if menu == 'utils' %} active {% endif %}">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Tools
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="{% url 'dp_import' %}">Import DP Analysis</a>
+        </div>
+    </li>
+</ul>
