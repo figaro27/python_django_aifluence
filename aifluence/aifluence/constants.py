@@ -731,3 +731,9 @@ CURRENCY_CHOICES = (
     ('usd', 'USD'),
     ('eur', 'EUR'),
 )
+
+PLATFORM_CHOICES = (
+    ('IN', 'Instagram'),
+    ('FA', 'Facebook'),
+    ('TW', 'Twitter'),
+)

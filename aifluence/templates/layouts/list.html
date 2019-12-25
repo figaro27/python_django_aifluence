@@ -1,0 +1,44 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Campagins</title>
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-5 center">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="page-title">
+                        {% block table_title %}
+                        {% endblock %}
+                    </h3>
+                    <div class="card-options">
+                        {% block actions %}
+                        {% endblock %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row row-cards ">
+                        <div class="col-lg-12 ">
+                            <div>
+                                {% block add_button %}
+                                {% endblock %}
+                            </div>
+                            {% block list %}
+                            {% endblock %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    {% block table_footer %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

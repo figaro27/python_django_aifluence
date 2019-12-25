@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
+from django.db.models.expressions import RawSQL
+from django.db.models import F, Sum
 
-from .models import Campaign
+from campaign.models import Campaign
+from influencer.models import Analysis
+from invitation.models import Invitation
 from .forms import CampaignForm
 import aifluence.constants as CONSTANTS
 
@@ -36,4 +40,30 @@ def campaign_create(request):
             campaign.client = request.user
             campaign.save()
         return redirect('active_campaigns')
+
+def campaign_invite_influencers(request, *args, **kwargs):
+    if request.method == 'GET':
+        campaign_id = kwargs.get('pk')
         
+        # Apply filter with campaign information
+        influencer_list = Analysis.objects.all()
+
+        # Total followers
+        influencer_list = influencer_list.annotate(
+            number1=RawSQL("basics->'gender'->'Male'->'number'", []),
+            number2=RawSQL("basics->'gender'->'Female'->'number'", [])
+        ).order_by('-number1', '-number2')
+
+        #Add invitation status and total followers
+        for influencer in influencer_list:
+            invitations = influencer.invitation_set.filter(campaign_id=campaign_id, client=request.user)
+            if (invitations.count() == 0):
+                influencer.invite_status = ""
+            else:
+                influencer.invite_status = invitations.first().get_status_display
+            influencer.followers = influencer.basics['gender']['Male']['number'] + influencer.basics['gender']['Female']['number'] 
+        
+        context = dict()
+        context['menu'] = 'campaign'
+        context['object_list'] = influencer_list
+        return render(request, 'campaigns/invite_influencers.html', context)

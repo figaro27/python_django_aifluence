@@ -1,4 +1,4 @@
-{% extends 'layouts/list_template.html' %}
+{% extends 'layouts/tab_list_template.html' %}
 {% load static %}
 
 {% block actions %}
@@ -20,9 +20,9 @@
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.brand_name }}</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.brand_attributes }}</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.campaign_brief }}</td>
-                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.campaign_budget }}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{item.campaign_currency|yesno:"$,€"}} {{item.campaign_budget}}</td>
                 <td class="text-right d-none d-md-table-cell text-nowrap ">
-                    <a href="#" class="btn btn-secondary btn-sm" style="width:120px;"> Send Invitation</a><br/>
+                    <a href="{% url 'campaign_invite_influencers' pk=item.id %}" class="btn btn-secondary btn-sm" style="width:120px;"> Send Invitation</a><br/>
                     <a href="#" class="btn btn-info btn-sm mt-1" style="width:120px;"> View Status </a>
                 </td>
             </tr>

@@ -1,11 +1,6 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-
-PLATFORM_CHOICES = (
-    ('IN', 'Instagram'),
-    ('FA', 'Facebook'),
-    ('TW', 'Twitter')
-)
+from aifluence.constants import PLATFORM_CHOICES
 
 # Create your models here.
 class Analysis(models.Model):
@@ -24,3 +19,6 @@ class Analysis(models.Model):
     #
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.influencer_account

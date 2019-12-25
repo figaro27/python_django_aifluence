@@ -7,4 +7,4 @@ from .models import Invitation
 class InvitationForm(forms.ModelForm):
     class Meta:
         model = Invitation
-        fields = ['client_id', 'campaign_id', 'influencer_account', 'influencer_platform']
+        fields = ['client', 'campaign', 'analysis', 'influencer_platform']

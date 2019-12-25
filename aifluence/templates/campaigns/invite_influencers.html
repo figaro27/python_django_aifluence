@@ -1,0 +1,60 @@
+{% extends 'layouts/list.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Campagins</title>
+{% endblock %}
+
+{% block table_title %}
+    Invite Influencers
+{% endblock %}
+
+{% block list %}
+<table class="table table-borderless table-vcenter mt-3">
+    <thead class="border-bottom">
+        <th class="text-left d-md-table-cell text-nowrap">Influencer Account</th>
+        <th class="text-left d-md-table-cell text-nowrap">Influencer Platform</th>
+        <th class="text-left d-md-table-cell text-nowrap">Followers</th>
+        <th class="text-left d-md-table-cell text-nowrap">Invitation Status</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for item in object_list %}
+        <tr class="border-bottom">
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.influencer_account|safe }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.get_influencer_platform_display|safe }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.followers }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                {% if item.invite_status %}
+                    {% if item.invite_status == 'SENT' %}
+                    <span class="status-span d-block text-white bg-info">{{ item.invite_status }}</span>
+                    {% elif item.invite_status == 'REJECTED' %}
+                    <span class="status-spand-block text-white bg-secondary">{{ item.invite_status }}</span>
+                    {% elif item.invite_status == 'EXPIRED' %}
+                    <span class="status-span d-block text-white bg-warning">{{ item.invite_status }}</span>
+                    {% elif item.invite_status == 'COMPLETED' %}
+                    <span class="status-span d-block text-white bg-success">{{ item.invite_status }}</span>
+                    {% elif item.invite_status == 'ACCEPTED' %}
+                    <span class="status-span d-block text-white bg-primary">{{ item.invite_status }}</span>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td class="text-right d-md-table-cell text-nowrap ">
+                {% if item.invite_status == 'SENT' %}
+                <a href="#" class="btn btn-danger btn-sm" style="width:80px;border-radius:0.4rem;">Cancel</a>
+                {% elif item.invite_status == 'EXPIRED' %}
+                <a href="#" class="btn btn-warning btn-sm" style="width:80px;border-radius:0.4rem;">Re-invite</a>
+                {% elif not item.invite_status %}
+                <a href="#" class="btn btn-info btn-sm" style="width:80px;border-radius:0.4rem;">Invite</a>
+                {% else %}
+                
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock%}
+
+{% block table_footer %}
+    <a onclick="window.history.back()" class="btn btn-secondary btn-sm text-white float-right">Back</a>
+{% endblock %}

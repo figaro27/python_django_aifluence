@@ -40,3 +40,9 @@
 label {
   color: #3f6780;
 }
+
+.status-span {
+  width: 70px;
+  border-radius: 1rem;
+  text-align: center;
+}
