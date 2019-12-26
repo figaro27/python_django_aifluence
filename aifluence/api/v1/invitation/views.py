@@ -34,7 +34,7 @@ class InviteInfluencerView(APIView):
 
             #send invitation in instagram 
             
-            if send_invitation(influencer.influencer_account, influencer.influencer_platform):
+            if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id):
                 try:
                     invitations = Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer)
                     if invitations.count() > 0:
