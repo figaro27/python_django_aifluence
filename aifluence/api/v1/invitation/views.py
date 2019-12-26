@@ -28,51 +28,60 @@ class InviteInfluencerView(APIView):
         campaign_id = request.data['campaign_id']
         influencer = Analysis.objects.get(pk=influencer_id)
         campaign = Campaign.objects.get(pk=campaign_id)
-        return_data = dict()
+        code = ""
 
         if action=='invite':
 
             #send invitation in instagram 
-            
-            if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id):
-                try:
-                    invitations = Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer)
-                    if invitations.count() > 0:
+            try:
+                invitations = Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer)
+               
+                if invitations.count() > 0:
+                    if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitations.first().invitation_key):
                         invitations.update(status='SE', last_sent_at=datetime.now())
+                        code = 'success'
                     else:
-                        invitation = Invitation()
-                        invitation.client = request.user
-                        invitation.campaign = campaign
-                        invitation.influencer_account = influencer.influencer_account
-                        invitation.influencer_platform = influencer.influencer_platform
-                        invitation.invitation_content = 'AAAAAAAAAAAAAA'
+                        code = 'failed'
+                else:
+                    invitation = Invitation()
+                    invitation.client = request.user
+                    invitation.campaign = campaign
+                    invitation.influencer_account = influencer.influencer_account
+                    invitation.influencer_platform = influencer.influencer_platform
+                    invitation.invitation_content = 'AAAAAAAAAAAAAA'
+                    invitation.status = 'CR'
+                    invitation.analysis = influencer
+                    invitation.save()
+
+                    if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitation.invitation_key):
                         invitation.status = 'SE'
-                        invitation.analysis = influencer
                         invitation.last_sent_at = datetime.now()
                         invitation.save()
-
-                    return_data['code'] = 'success'
-                except:
-                    return_data['code'] = 'failed'
-            else:
-                return_data['code'] = 'failed'
+                        code = 'success'
+                    else:
+                        code = 'failed'
+            except:
+                code = 'failed'
 
         elif action=="reinvite":
             try:
-                Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer).update(status='SE')
-                return_data['code'] = 'success'
+                if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitation.invitation_key):
+                    Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer).update(status='SE')
+                    code = 'success'
+                else:
+                    code = 'failed'
             except:
-                return_data['code'] = 'failed'
+                code = 'failed'
         else:
             try:
                 Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer).update(status='CA')
-                return_data['code'] = 'success'
+                code = 'success'
             except:
-                return_data['code'] = 'failed'
+                code = 'failed'
         
-        if return_data['code'] == 'success':
-            return Response(return_data, status=status.HTTP_201_CREATED)
-        elif return_data['code'] == 'failed':
-            return Response(return_data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if code == 'success':
+            return Response(status=status.HTTP_201_CREATED)
+        elif code == 'failed':
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
