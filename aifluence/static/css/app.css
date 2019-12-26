@@ -42,7 +42,8 @@ label {
 }
 
 .status-span {
-  width: 70px;
+  width: 80px;
   border-radius: 1rem;
   text-align: center;
+  font-size: 0.875rem;
 }

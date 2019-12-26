@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'fontawesome',
     'widget_tweaks',
     'crispy_forms',
+    'rest_framework',
+    
     'users',
     'invitation',
     'dashboard',

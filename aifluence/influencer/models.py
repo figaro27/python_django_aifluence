@@ -21,4 +21,4 @@ class Analysis(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.influencer_account
+        return self.influencer_account + " " + self.influencer_platform

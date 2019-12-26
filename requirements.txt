@@ -3,3 +3,4 @@ psycopg2-binary
 django-bootstrap-static
 django-widget-tweaks
 django-crispy-forms
+djangorestframework

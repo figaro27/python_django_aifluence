@@ -15,7 +15,8 @@ INVITATION_STATUS = (
     ('AC', 'ACCEPTED'),
     ('RE', 'REJECTED'),
     ('CO', 'COMPLETED'),
-    ('EX', 'EXPIRED')
+    ('EX', 'EXPIRED'),
+    ('CA', 'CANCELED')
 )
 
 def generate_token():
@@ -26,6 +27,7 @@ class Invitation(models.Model):
     client = models.ForeignKey(User, on_delete=CASCADE, null=True)
     campaign = models.ForeignKey(Campaign, on_delete=CASCADE, null=True)
     invitation_key = models.CharField(max_length=64, default=generate_token)
+    influencer_account = models.CharField(max_length=30)
     influencer_platform = models.CharField(max_length=2, choices=PLATFORM_CHOICES, default='IN')
     invitation_content = models.TextField(max_length=4000)
     created_at = models.DateTimeField(auto_now_add=True)

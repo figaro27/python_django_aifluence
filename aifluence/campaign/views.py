@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
-from django.db.models import F, Sum
 
 from campaign.models import Campaign
 from influencer.models import Analysis
@@ -66,4 +65,5 @@ def campaign_invite_influencers(request, *args, **kwargs):
         context = dict()
         context['menu'] = 'campaign'
         context['object_list'] = influencer_list
+        context['campaign_id'] = campaign_id
         return render(request, 'campaigns/invite_influencers.html', context)

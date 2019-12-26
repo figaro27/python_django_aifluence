@@ -27,7 +27,7 @@ def invitation_influencer(request, invitation_key=None, accepted=None):
     except Invitation.DoesNotExist:
         invitation = None
     if invitation:
-        if invitation.status == 'EX':
+        if invitation.status == 'EX' or invitation.status == 'CA':
             return HttpResponseNotFound('<h1>Invitation has been expired</h1>')
         if (datetime.now() - invitation.last_sent_at.replace(tzinfo=None)).days > 1:
             invitation.status = 'EX'

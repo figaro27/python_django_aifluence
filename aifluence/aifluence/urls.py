@@ -30,4 +30,6 @@ urlpatterns = [
     path('invitation/', include('invitation.urls')),
     path('campaigns/', include('campaign.urls')),
     path('utils/', include('utils.urls')),
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/', include('api.urls', namespace='api')),
 ]

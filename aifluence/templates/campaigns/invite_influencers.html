@@ -7,8 +7,8 @@
 {% block table_title %}
     Invite Influencers
 {% endblock %}
-
 {% block list %}
+{% csrf_token %}
 <table class="table table-borderless table-vcenter mt-3">
     <thead class="border-bottom">
         <th class="text-left d-md-table-cell text-nowrap">Influencer Account</th>
@@ -35,16 +35,21 @@
                     <span class="status-span d-block text-white bg-success">{{ item.invite_status }}</span>
                     {% elif item.invite_status == 'ACCEPTED' %}
                     <span class="status-span d-block text-white bg-primary">{{ item.invite_status }}</span>
+                    {% elif item.invite_status == 'CANCELED' %}
+                    <span class="status-span d-block text-white bg-secondary">{{ item.invite_status }}</span>
                     {% endif %}
                 {% endif %}
             </td>
             <td class="text-right d-md-table-cell text-nowrap ">
                 {% if item.invite_status == 'SENT' %}
-                <a href="#" class="btn btn-danger btn-sm" style="width:80px;border-radius:0.4rem;">Cancel</a>
+                <a data-action="cancel" data-campaign={{campaign_id}} data-id={{item.id}} data-row={{ forloop.counter }} 
+                    class="btn-invite btn btn-danger btn-sm text-white" style="width:80px;border-radius:0.4rem;">Cancel</a>
                 {% elif item.invite_status == 'EXPIRED' %}
-                <a href="#" class="btn btn-warning btn-sm" style="width:80px;border-radius:0.4rem;">Re-invite</a>
-                {% elif not item.invite_status %}
-                <a href="#" class="btn btn-info btn-sm" style="width:80px;border-radius:0.4rem;">Invite</a>
+                <a data-action="reinvite" data-campaign={{campaign_id}} data-id={{item.id}} data-row={{ forloop.counter }} 
+                    class="btn-invite btn btn-warning btn-sm text-white" style="width:80px;border-radius:0.4rem;">Re-invite</a>
+                {% elif not item.invite_status or item.invite_status == 'CANCELED' %}
+                <a data-action="invite" data-campaign={{campaign_id}} data-id={{item.id}} data-row={{ forloop.counter }} 
+                    class="btn-invite btn btn-info btn-sm text-white" style="width:80px;border-radius:0.4rem;">Invite</a>
                 {% else %}
                 
                 {% endif %}
@@ -57,4 +62,55 @@
 
 {% block table_footer %}
     <a onclick="window.history.back()" class="btn btn-secondary btn-sm text-white float-right">Back</a>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+    $(document).ready(function(){
+        $.ajaxSetup({
+            headers:
+            { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        var selected_row_index = 0;
+
+        $("td").on('click','a.btn-invite', function(){
+            var selected_row_index = $(this).attr('data-row')
+            var selected_row = $('table').find('tr').eq($(this).attr('data-row'))
+            var action = $(this).attr('data-action')
+            var campaign_id = $(this).attr('data-campaign')
+            var influencer_id = $(this).attr('data-id')
+            var status_td = $(selected_row).find('td').eq('3')
+            var action_td = $(selected_row).find('td').eq('4')
+            
+            $(action_td).find('a').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>')
+            
+            $.ajax({
+                url: "/api/v1/invitations/influencer/" + influencer_id,
+                method: 'post',
+                data: {
+                    'action': action,
+                    'campaign_id': campaign_id
+                },
+                success: function(data){
+                    if (data.code == 'success'){
+                        if (action == 'invite') {
+                            $(status_td).html('<span class="status-span d-block text-white bg-info">SENT</span>')
+                            var action_html = '<a data-action="cancel" data-campaign=' + campaign_id + ' data-id=' + influencer_id +
+                                ' data-row=' + selected_row_index + ' class="btn-invite btn btn-danger btn-sm text-white" style="width:80px;border-radius:0.4rem;">Cancel</a>'
+                            $(action_td).html(action_html)
+                        }
+
+                        if (action == 'cancel') {
+                            $(status_td).html('<span class="status-span d-block text-white bg-secondary">CANCELED</span>')
+                            var action_html = '<a data-action="invite" data-campaign=' + campaign_id + ' data-id=' + influencer_id +
+                                ' data-row=' + selected_row_index + ' class="btn-invite btn btn-info btn-sm text-white" style="width:80px;border-radius:0.4rem;">Invite</a>'
+                            $(action_td).html(action_html)
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
