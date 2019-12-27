@@ -39,10 +39,10 @@
                             <div class="form-group text-center">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                     <label class="btn btn-secondary btn-userrole">
-                                        <input type="radio" name="is_client" id="id_client" value="1" autocomplete="off"> Work as Client
+                                        <input type="radio" name="is_client" id="id_client" value="1" autocomplete="off" {{is_invited|yesno:'disabled,' }}> Work as Client
                                     </label>
-                                    <label class="btn btn-secondary btn-userrole">
-                                        <input type="radio" name="is_client" id="id_influencer" value="0" autocomplete="off"> Work as Influencer
+                                    <label class="btn btn-secondary btn-userrole {{is_invited|yesno:'active focus,'}}">
+                                        <input type="radio" name="is_client" id="id_influencer" value="0" autocomplete="off" {{is_invited|yesno:'checked,'}}> Work as Influencer
                                     </label>
                                 </div>
                                 <div class="invalid-feedback">

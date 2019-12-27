@@ -91,7 +91,7 @@ class CustomizedInstagramAPI(InstagramAPI):
             return False
 
 def send_instagram_invitation(influencer_account, campaign_id, invitation_key):
-    username = 'otsukaendo'
+    username = 'wilsonzh1011'
     pwd = 'Asdfg@123#'
 
     time.sleep(1)
@@ -106,7 +106,7 @@ def send_instagram_invitation(influencer_account, campaign_id, invitation_key):
     invitation_message = "Dear " + str(respJSON['users'][0].get("user").get("full_name")) + ",\n"
     invitation_message += "We invite you to the marketing campaign you'd be interested in.\n"
     invitation_message += "Please signup our platform using below url:\n"
-    invitation_message += "https://aifluence.com/" + "invitations/" + invitation_key
+    invitation_message += "http://local.aifluence.com/" + "invitations/" + invitation_key
 
     res = API.direct_message(invitation_message, [influencer_user_id])
     API.logout()

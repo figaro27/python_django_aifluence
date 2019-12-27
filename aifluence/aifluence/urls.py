@@ -27,7 +27,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(template_name='registration/login.html'), name='logout'),
     path('register/', register, name='register'),
     path('dashboard/', dashboard, name="dashboard"),
-    path('invitation/', include('invitation.urls')),
+    path('invitations/', include('invitation.urls')),
     path('campaigns/', include('campaign.urls')),
     path('utils/', include('utils.urls')),
     path('api-auth/', include('rest_framework.urls')),

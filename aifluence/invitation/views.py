@@ -21,41 +21,59 @@ def invitation_create(request):
         form = InvitationForm()
     return render(request, 'invitation/create.html', {'form': form})
 
-def invitation_influencer(request, invitation_key=None, accepted=None):
+def invitation_influencer(request, invitation_key=None):
     try:
         invitation = Invitation.objects.get(invitation_key=invitation_key)
     except Invitation.DoesNotExist:
         invitation = None
     if invitation:
-        if invitation.status == 'EX' or invitation.status == 'CA':
-            return HttpResponseNotFound('<h1>Invitation has been expired</h1>')
-        if (datetime.now() - invitation.last_sent_at.replace(tzinfo=None)).days > 1:
+        if invitation.status == 'CA':
+            return HttpResponseNotFound('<h1>Invitation has been canceled</h1>')
+        
+        if (invitation.status == 'EX') or (invitation.last_sent_at and (datetime.now() - invitation.last_sent_at.replace(tzinfo=None)).days > 1):
             invitation.status = 'EX'
             invitation.save()
             return HttpResponseNotFound('<h1>Invitation has been expired</h1>')
         else:
-            if request.GET.get('accepted') == 'true': 
-                invitation.status = 'AC'
-                invitation.save()
+            return render(request, 'invitation/campaign_info.html', {'invitation': invitation})
+    else:
+        return HttpResponseNotFound('<h1>Error</h1>')
 
-                if (invitation.influencer_platform == 'IN'):
-                    users = Account.objects.filter(instagram_account=invitation.influencer_account)
-                elif (invitation.influencer_platform == 'FA'):
-                    users = Account.objects.filter(facebook_account=invitation.influencer_account)
-                elif (invitation.influencer_platform == 'TW'):
-                    users = Account.objects.filter(twitter_account=invitation.influencer_account)
-                else:
-                    users = Account.objects.filter(linkedin_account=invitation.influencer_account)
+def invitation_accepted(request, invitation_key=None):
+    try:
+        invitation = Invitation.objects.get(invitation_key=invitation_key)
+    except Invitation.DoesNotExist:
+        invitation = None
+    if invitation:
+        invitation.status = 'AC'
+        invitation.save()
 
-                if (users.count() > 0):
-                    login(request, users.first())
-                    return redirect('login')
-                else:
-                    is_invited = True
-                    return render(request, 'registration/register.html', {'is_invited': is_invited, 'form': UserCreationForm(), 'invitation': invitation})
-            else:
-                invitation.status = 'RE'
-                invitation.save()
-                return HttpResponse()
+        if (invitation.influencer_platform == 'IN'):
+            users = Account.objects.filter(instagram_account=invitation.influencer_account)
+        elif (invitation.influencer_platform == 'FA'):
+            users = Account.objects.filter(facebook_account=invitation.influencer_account)
+        elif (invitation.influencer_platform == 'TW'):
+            users = Account.objects.filter(twitter_account=invitation.influencer_account)
+        else:
+            users = Account.objects.filter(linkedin_account=invitation.influencer_account)
+
+        if (users.count() > 0):
+            login(request, users.first())
+            return redirect('dashboard')
+        else:
+            is_invited = True
+            return render(request, 'registration/register.html', {'is_invited': is_invited, 'form': UserCreationForm(), 'invitation': invitation})
+    else:
+        return HttpResponseNotFound('<h1>Error</h1>')
+
+def invitation_rejected(request, invitation_key=None):
+    try:
+        invitation = Invitation.objects.get(invitation_key=invitation_key)
+    except Invitation.DoesNotExist:
+        invitation = None
+    if invitation:
+        invitation.status = 'RE'
+        invitation.save()
+        return HttpResponseNotFound('<h1>Invitation has been rejected</h1>')
     else:
         return HttpResponseNotFound('<h1>Error</h1>')

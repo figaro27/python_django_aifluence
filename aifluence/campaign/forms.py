@@ -27,3 +27,4 @@ class CampaignForm(forms.ModelForm):
         self.fields['age_range'].required = False
         self.fields['social_status'].required = False
         self.fields['location'].required = False
+        self.fields['interests'].required = False
