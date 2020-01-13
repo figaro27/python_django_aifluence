@@ -5,7 +5,7 @@ from django.contrib.auth.views import PasswordResetView
 from django.forms import TextInput, EmailInput
 from django.forms.widgets import Input
 
-from users.models import User
+from users.models import User, Influencer
 
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -38,3 +38,8 @@ class UserCreationForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError('Passwords don\'t match', code='password_mismatch')
         return password2
+
+class InfluencerProfileForm(forms.ModelForm):
+    class Meta:
+        model = Influencer
+        fields = ['instagram_account', 'facebook_account', 'twitter_account']

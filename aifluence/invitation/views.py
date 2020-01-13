@@ -6,7 +6,7 @@ from django.db.models import Q
 from datetime import datetime
 
 from .models import Invitation
-from users.models import Account
+from users.models import Influencer
 from users.forms import UserCreationForm
 # Create your views here.
 from .forms import InvitationForm
@@ -49,13 +49,13 @@ def invitation_accepted(request, invitation_key=None):
         invitation.save()
 
         if (invitation.influencer_platform == 'IN'):
-            users = Account.objects.filter(instagram_account=invitation.influencer_account)
+            users = Influencer.objects.filter(instagram_account=invitation.influencer_account)
         elif (invitation.influencer_platform == 'FA'):
-            users = Account.objects.filter(facebook_account=invitation.influencer_account)
+            users = Influencer.objects.filter(facebook_account=invitation.influencer_account)
         elif (invitation.influencer_platform == 'TW'):
-            users = Account.objects.filter(twitter_account=invitation.influencer_account)
+            users = Influencer.objects.filter(twitter_account=invitation.influencer_account)
         else:
-            users = Account.objects.filter(linkedin_account=invitation.influencer_account)
+            users = Influencer.objects.filter(linkedin_account=invitation.influencer_account)
 
         if (users.count() > 0):
             login(request, users.first())

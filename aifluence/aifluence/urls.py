@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, PasswordResetCompleteView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetView, LogoutView
-from users.views import register
+from users.views import register, influencer_profile
 from django.views.generic import TemplateView
 from dashboard.views import dashboard
 
@@ -26,6 +26,7 @@ urlpatterns = [
     path('login', LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', LogoutView.as_view(template_name='registration/login.html'), name='logout'),
     path('register/', register, name='register'),
+    path('influencer/profile', influencer_profile, name='influencer_profile'),
     path('dashboard/', dashboard, name="dashboard"),
     path('invitations/', include('invitation.urls')),
     path('campaigns/', include('campaign.urls')),
