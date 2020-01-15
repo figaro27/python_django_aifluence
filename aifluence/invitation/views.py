@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.contrib import messages
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.db.models import Q
+from django.views.generic import ListView
 from datetime import datetime
 
 from .models import Invitation
@@ -10,6 +12,23 @@ from users.models import Influencer
 from users.forms import UserCreationForm
 # Create your views here.
 from .forms import InvitationForm
+
+def influencer_invitations(request):
+    print('asdfasd')
+    if request.method == 'GET':
+        try:
+            influencer = Influencer.objects.get(user=request.user)
+            invitation_list = Invitation.objects.filter(Q(influencer_account=influencer.instagram_account)|Q(influencer_account=influencer.facebook_account)|Q(influencer_account=influencer.twitter_account))
+        except Influencer.DoesNotExist:
+            messages.warning(request, 'You must fill the profile form to see invitations')
+            return HttpResponseRedirect(reverse('dashboard'))
+
+        context = dict()
+        context.update({
+            'menu':'invitations',
+            'invitation_list': invitation_list
+        })
+        return render(request, 'invitation/influencer_invitations.html', context)
 
 def invitation_create(request):
     if request.method == 'POST':

@@ -1,0 +1,36 @@
+{% extends 'layouts/list.html' %}
+{% load static %}
+
+{% block actions %}
+{% endblock %}
+
+{% block list %}
+<table class="table card-table table-borderless table-vcenter mt-3">
+    <tr class="border-bottom">
+        <th class="text-left d-none d-md-table-cell text-nowrap">Client</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Brand</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Comment</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Status</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Sent at</th>
+        <th></th>
+    </tr>
+    <tbody>
+        {% for item in invitation_list %}
+            <tr class="border-bottom">
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.client.first_name }} {{ item.client.last_name }}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.campaign.brand_name }}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.invitation_content }}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.get_status_display }}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.last_sent_at|date:' d M Y' }}</td>
+                <td class="text-right d-none d-md-table-cell text-nowrap ">
+                    <a href="{% url 'invitation_influencer' invitation_key=item.invitation_key %}" class="btn btn-info btn-sm mt-1" style="width:120px;"> View </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>    
+                <td align="center" colspan="6" class="align-content-center">You haven't received any invitation.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock%}

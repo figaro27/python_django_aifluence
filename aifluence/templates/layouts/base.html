@@ -19,6 +19,26 @@
 
     {% endblock %}
 
+    {% block messages %}
+        {% for message in messages %}
+            {% if message.tags == "error" %}
+                <div class="alert alert-dismissable alert-danger position-static" role="alert" style="border-radius: 0">
+            {% elif message.tags == "warning" %}
+                <div class="alert alert-dismissable alert-warning position-static" role="alert" style="border-radius: 0">
+            {% elif message.tags == "success" %}
+                <div class="alert alert-dismissable alert-success position-static" role="alert" style="border-radius: 0">
+            {% elif message.tags == "info" %}
+                <div class="alert alert-dismissable alert-primary position-static" role="alert" style="border-radius: 0">
+            {% endif %}
+                <div class="row justify-content-center">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    {% endblock %}
     
     {% block content %}
     

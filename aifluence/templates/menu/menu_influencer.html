@@ -7,12 +7,12 @@
         <a class="nav-link" href="#">Contracts</a>
     </li>
     <li class="nav-item {% if menu == 'invitations' %} active {% endif %}">
-        <a class="nav-link" href="#">Invitations</a>
+        <a class="nav-link" href="{% url 'influencer_invitations' %}">Invitations</a>
     </li>
     <li class="nav-item {% if menu == 'messages' %} active {% endif %}">
         <a class="nav-link" href="#">Messages</a>
     </li>
     <li class="nav-item {% if menu == 'profile' %} active {% endif %}">
-        <a class="nav-link" href="#">Profile</a>
+        <a class="nav-link" href="{% url 'influencer_profile' %}">Profile</a>
     </li>
 </ul>
