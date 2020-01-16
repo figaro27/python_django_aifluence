@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from .forms import UserCreationForm, InfluencerProfileForm
-from .models import User
+from .models import User, Influencer
 
 def register(request):
     if request.method == 'POST':
@@ -22,13 +22,24 @@ def register(request):
         return render(request, 'registration/register.html', {'form': regform})
 
 def influencer_profile(request):
+    try:
+        influencer = Influencer.objects.get(user=request.user)
+    except Influencer.DoesNotExist:
+        influencer = None
+        
     if request.method == 'GET':
-        profileForm = InfluencerProfileForm()
+        profileForm = InfluencerProfileForm(instance=influencer)
         return render(request, 'registration/influencer_profile.html', {'form': profileForm, 'menu': 'profile'})
     else:
         profileForm = InfluencerProfileForm(request.POST)
         if profileForm.is_valid():
-            profile = profileForm.save(commit=False)
-            profile.user = request.user
-            profile.save()
+            if influencer == None:
+                profile = profileForm.save(commit=False)
+                profile.user = request.user
+                profile.save()
+            else:
+                influencer.instagram_account = request.POST.get('instagram_account')
+                influencer.facebook_account = request.POST.get('facebook_account')
+                influencer.twitter_account = request.POST.get('twitter_account')
+                influencer.save()
             return redirect('dashboard')
