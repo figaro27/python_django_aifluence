@@ -737,3 +737,13 @@ PLATFORM_CHOICES = (
     ('FA', 'Facebook'),
     ('TW', 'Twitter'),
 )
+
+CONTRACT_STATUS_CHOICES = (
+    ('OT', 'Opted'),
+    ('DS', 'Discussing'),
+    ('OF', 'Offered'),
+    ('AC', 'Accepted'),
+    ('RE', 'Rejected'),
+    ('CA', 'Cancelled'),
+    ('CO', 'Completed'),
+)

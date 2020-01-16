@@ -4,7 +4,7 @@
         <a class="nav-link" href="#">Home </a>
     </li>
     <li class="nav-item {% if menu == 'contracts' %} active {% endif %}">
-        <a class="nav-link" href="#">Contracts</a>
+        <a class="nav-link" href="{% url 'influencer_contracts' %}">Contracts</a>
     </li>
     <li class="nav-item {% if menu == 'invitations' %} active {% endif %}">
         <a class="nav-link" href="{% url 'influencer_invitations' %}">Invitations</a>

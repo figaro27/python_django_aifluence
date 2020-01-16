@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 
-from campaign.models import Campaign
+from campaign.models import Campaign, Contract
 from influencer.models import Analysis
 from invitation.models import Invitation
 from .forms import CampaignForm
@@ -20,6 +20,9 @@ class ActiveCampaigns(ListView):
             'menu':'campaign'
         })
         return context
+    def get_queryset(self):
+        queryset = Campaign.objects.filter(client=self.request.user)
+        return queryset
 
 def campaign_create(request):
     if request.method == 'GET':
@@ -67,3 +70,20 @@ def campaign_invite_influencers(request, *args, **kwargs):
         context['object_list'] = influencer_list
         context['campaign_id'] = campaign_id
         return render(request, 'campaigns/invite_influencers.html', context)
+
+#influencer contracts
+class InfluencerContracts(ListView):
+    model = Contract
+    template_name = 'campaigns/influencer_contracts.html'
+    context_object_name = 'contract_list'
+
+    def get_context_data(self, **kwargs):
+        context = super(InfluencerContracts, self).get_context_data(**kwargs)
+        context.update({
+            'menu':'contracts'
+        })
+        return context
+    
+    def get_queryset(self):
+        queryset = Contract.objects.filter(influencer__user=self.request.user)
+        return queryset

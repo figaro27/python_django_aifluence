@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models import CASCADE
-from django.contrib.postgres.fields import ArrayField
-from users.models import User
+from django.contrib.postgres.fields import ArrayField, JSONField
+
+from users.models import User, Influencer
 import aifluence.constants as CONSTANTS
 # Create your models here.
 class Campaign(models.Model):
@@ -50,9 +51,20 @@ class Campaign(models.Model):
     previous_marketing_campaigns = models.CharField(max_length=64)
     owned_event = models.CharField(max_length=64)
     sponsored_event = models.CharField(max_length=64)
-    client = models.ForeignKey(User, on_delete=CASCADE, null=True)
+    client = models.ForeignKey(User, on_delete=CASCADE, null=True, related_name='client')
+    agent = models.ForeignKey(User, on_delete=CASCADE, null=True, related_name='agent')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.brand_name
+
+class Contract(models.Model):
+    campaign = models.ForeignKey(Campaign, on_delete=CASCADE, null=True)
+    influencer = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
+    posting_suggestion = models.CharField(max_length=200, null=True, blank=True)
+    contract_terms = JSONField(null=True)
+    contract_status = models.CharField(max_length=2, choices=CONSTANTS.CONTRACT_STATUS_CHOICES, default='OT')
+
+    def __str__(self):
+        return self.campaign + " - " + self.campaign.client + " - " + self.influencer
