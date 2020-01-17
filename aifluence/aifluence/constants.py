@@ -739,8 +739,6 @@ PLATFORM_CHOICES = (
 )
 
 CONTRACT_STATUS_CHOICES = (
-    ('OT', 'Opted'),
-    ('DS', 'Discussing'),
     ('OF', 'Offered'),
     ('AC', 'Accepted'),
     ('RE', 'Rejected'),

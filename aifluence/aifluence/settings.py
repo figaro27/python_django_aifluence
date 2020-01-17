@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'dashboard',
     'campaign',
     'utils',
-    'influencer'
+    'influencer',
+    'message',
 ]
 
 MIDDLEWARE = [

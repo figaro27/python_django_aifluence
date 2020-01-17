@@ -59,12 +59,21 @@ class Campaign(models.Model):
     def __str__(self):
         return self.brand_name
 
-class Contract(models.Model):
+class Discussion(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=CASCADE, null=True)
-    influencer = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
+    invitation = models.ForeignKey('invitation.Invitation', on_delete=CASCADE, null=True)
+    influener = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
+    influencer_platform = models.CharField(max_length=2, choices=CONSTANTS.PLATFORM_CHOICES, default='IN')
     posting_suggestion = models.CharField(max_length=200, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class Contract(models.Model):
+    discussion = models.ForeignKey(Discussion, on_delete=CASCADE, null=True)
     contract_terms = JSONField(null=True)
     contract_status = models.CharField(max_length=2, choices=CONSTANTS.CONTRACT_STATUS_CHOICES, default='OT')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.campaign + " - " + self.campaign.client + " - " + self.influencer
+        return self.discussion.campaign + " - " + self.discussion.campaign.client + " - " + self.discussion.influencer
