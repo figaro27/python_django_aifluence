@@ -43,3 +43,7 @@ class InfluencerProfileForm(forms.ModelForm):
     class Meta:
         model = Influencer
         fields = ['instagram_account', 'facebook_account', 'twitter_account']
+        
+class LoginForm(forms.Form):
+    username = forms.CharField()
+    password = forms.CharField(widget=forms.PasswordInput())

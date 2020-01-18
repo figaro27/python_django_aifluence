@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 
-from campaign.models import Campaign, Contract
+from campaign.models import Campaign, Contract, Discussion
 from influencer.models import Analysis
 from invitation.models import Invitation
 from .forms import CampaignForm
@@ -85,5 +85,21 @@ class InfluencerContracts(ListView):
         return context
     
     def get_queryset(self):
-        queryset = Contract.objects.filter(influencer__user=self.request.user)
+        queryset = Contract.objects.filter(discussion__influencer__user=self.request.user)
+        return queryset
+
+class InfluencerDiscussions(ListView):
+    model = Discussion
+    template_name = 'campaigns/influencer_discussions.html'
+    context_object_name = 'discussion_list'
+
+    def get_context_data(self, **kwargs):
+        context = super(InfluencerDiscussions, self).get_context_data(**kwargs)
+        context.update({
+            'menu':'discussions'
+        })
+        return context
+
+    def get_queryset(self):
+        queryset = Discussion.objects.filter(influencer__user=self.request.user)
         return queryset

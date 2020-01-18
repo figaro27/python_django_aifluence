@@ -62,7 +62,7 @@ class Campaign(models.Model):
 class Discussion(models.Model):
     campaign = models.ForeignKey(Campaign, on_delete=CASCADE, null=True)
     invitation = models.ForeignKey('invitation.Invitation', on_delete=CASCADE, null=True)
-    influener = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
+    influencer = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
     influencer_platform = models.CharField(max_length=2, choices=CONSTANTS.PLATFORM_CHOICES, default='IN')
     posting_suggestion = models.CharField(max_length=200, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

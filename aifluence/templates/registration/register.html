@@ -17,6 +17,9 @@
                     {% endif %}
                     <form action="{% url 'register' %}" method="post" class="card">
                         {% csrf_token %}
+                        {% if is_invited %}
+                        <input type="hidden" name="invitation_id" value="{{invitation.id}}">
+                        {% endif %}
                         <div class="card-body p-6">
                             <div class="form-group mb-0">
                                 {{ form.first_name|as_crispy_field }}

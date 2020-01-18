@@ -6,8 +6,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-12 mx-auto">
-                    <form class="card" method="post" action="{% url 'login' %}">
+                    <form class="card" method="post" action="{% url 'custom_login' %}">
                         {% csrf_token %}
+                        {% if invitation_id %}
+                        <input type="hidden" name="invitation_id" value="{{invitation_id}}">
+                        {% endif %}
                         <div class="card-body p-6">
                             <div class="card-title text-center">Login to your AIfluence account</div>
                             {% if form.errors %}

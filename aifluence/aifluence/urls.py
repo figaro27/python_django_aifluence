@@ -16,14 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth.views import LoginView, PasswordResetCompleteView, PasswordResetConfirmView, PasswordResetDoneView, PasswordResetView, LogoutView
-from users.views import register, influencer_profile
+from users.views import register, influencer_profile, custom_login
 from django.views.generic import TemplateView
 from dashboard.views import dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='layouts/landing.html'), name='home'),
-    path('login', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('login', custom_login, name='custom_login'),
     path('logout/', LogoutView.as_view(template_name='registration/login.html'), name='logout'),
     path('register/', register, name='register'),
     path('influencer/profile', influencer_profile, name='influencer_profile'),

@@ -144,8 +144,10 @@ STATICFILES_DIRS = [
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'dashboard'
+# LOGIN_REDIRECT_URL = 'dashboard'
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 USE_THOUSAND_SEPARATOR = True
+
+AUTHENTICATION_BACKENDS = ('users.auth.EmailOrUsernameModelBackend',)
