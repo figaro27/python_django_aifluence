@@ -23,7 +23,7 @@
         <tr class="border-bottom">
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.campaign }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.campaign.client }}</td>
-            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.campaign.agent }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.campaign.agent|default_if_none:'' }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.posting_suggestion }}</td>
             <td class="text-right d-md-table-cell text-nowrap ">
                 <a href="#" class="btn btn-info btn-sm mt-1" style="width:120px;"> View </a>

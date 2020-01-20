@@ -150,4 +150,4 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 USE_THOUSAND_SEPARATOR = True
 
-AUTHENTICATION_BACKENDS = ('users.auth.EmailOrUsernameModelBackend',)
+AUTHENTICATION_BACKENDS = ('users.auth.EmailOrUsernameModelBackend','django.contrib.auth.backends.ModelBackend',)
