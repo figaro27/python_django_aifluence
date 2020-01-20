@@ -103,3 +103,15 @@ class InfluencerDiscussions(ListView):
     def get_queryset(self):
         queryset = Discussion.objects.filter(influencer__user=self.request.user)
         return queryset
+
+def create_discussion(invitation, influencer):
+
+    discussion = Discussion()
+    discussion.campaign = invitation.campaign
+    discussion.influencer = influencer
+    discussion.invitation = invitation
+    discussion.influencer_platform = invitation.influencer_platform
+    discussion.posting_suggestion = 'Video style'
+    discussion.save()
+    return discussion.id
+

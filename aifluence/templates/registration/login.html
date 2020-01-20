@@ -6,10 +6,13 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 col-12 mx-auto">
-                    <form class="card" method="post" action="{% url 'custom_login' %}">
+                    <form class="card" method="post" action="{% url 'custom_login' %}{% if invitation_key %}?invitation_key={{invitation_key}}{% endif %}">
                         {% csrf_token %}
-                        {% if invitation_id %}
-                        <input type="hidden" name="invitation_id" value="{{invitation_id}}">
+                        {% if invitation_key %}
+                            <input type="hidden" name="invitation_key" value="{{invitation_key}}">
+                        {% endif %}
+                        {% if discussion_id %}
+                            <input type="hidden" name="discussion_id" value="{{discussion_id}}">
                         {% endif %}
                         <div class="card-body p-6">
                             <div class="card-title text-center">Login to your AIfluence account</div>
@@ -18,8 +21,8 @@
                                     check and try again.</p>
                             {% endif %}
                             <div class="form-group">
-                                <label class="form-label">Email address</label>
-                                <input class="form-control" name="username" placeholder="Username">
+                                <label class="form-label">Email or Username</label>
+                                <input class="form-control" name="username" placeholder="Email or Username">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">
@@ -47,7 +50,7 @@
                         </div>
                     </form>
                     <div class="text-center text-muted">
-                        Don't have account yet? <a href="{% url 'register' %}">Sign up</a>
+                        Don't have account yet? <a href="{% url 'register' %}?invitation_key={{invitation_key}}">Sign up</a>
                     </div>
                 </div>
             </div>
