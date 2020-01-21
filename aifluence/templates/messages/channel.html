@@ -1,0 +1,44 @@
+<div class="scroll-div" style="height:500px; overflow-x:hidden !important;" class="overflow-auto">
+    <div class="message-body">
+        {% include 'messages/message_body.html' %}
+    </div>
+</div>
+<div class="row mt-4 ">
+    <div class="col-md-11">
+        <textarea name="message" cols="500" rows="1" maxlength="4000" placeholder="Your Messages here" class="textarea form-control mb-2" id="id_message"></textarea>
+    </div>
+    <div class="col-md-1 p-0">
+        <a class="btn text-white bg-success disabled" id="send_btn" data-id="{{discussion_id}}">Send</a>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+
+        $('#id_message').on('keyup', function(){
+            if ($(this).val() === ""){
+                $('#send_btn').addClass('disabled');        
+            }else {
+                $('#send_btn').removeClass('disabled');
+            }
+        })
+
+        $('#send_btn').on('click', function(){
+            if($(this).hasClass('disabled'))
+                return false;
+        
+            $.ajax({
+                url: "/messages/channels/create",
+                method: "post",
+                data: {
+                    'discussion_id': $(this).attr('data-id'),
+                    'content': $("#id_message").val(),
+                    'type': 'IA',
+                },
+                success: function(data) {
+                    $(".message-body").html(data)
+                }
+            })
+        });
+    });
+</script>

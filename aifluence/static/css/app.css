@@ -47,3 +47,19 @@ label {
   text-align: center;
   font-size: 0.875rem;
 }
+
+.discussion-active {
+  color: green;
+}
+
+.channel-user {
+  line-height: 40px;
+  width: 40px;
+  height: 40px;
+  background-color: #c7c3c3;
+  font-size: 15px;
+  text-align: center;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}

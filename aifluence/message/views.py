@@ -12,9 +12,27 @@ from message.models import Message
 
 def messages(request, *args, **kwargs):
     if request.method == 'GET':
-        agents = []
         if request.user.is_influencer:
             discussions = Discussion.objects.filter(influencer__user=request.user)
         if request.user.is_staff:
             discussions = Discussion.objects.filter(campaign__agent=request.user)
         return render(request, 'messages/index.html', {'menu': 'messages', 'discussions': discussions,})
+
+def create_message(request, *args, **kwargs):
+    if request.method == 'POST':
+        discussion_id = request.POST.get('discussion_id')
+        discussion = Discussion.objects.get(pk=discussion_id)
+        content = request.POST.get('content')
+        type = request.POST.get('type')
+        if type == 'IA':
+            message = Message()
+            message.sent_by = discussion.influencer.user
+            message.sent_to = discussion.campaign.agent
+            message.discussion = discussion
+            message.content = content
+            message.save()
+        return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id),})
+
+def all_channel_messages(request, *args, **kwargs):
+    channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk'))
+    return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk')})
