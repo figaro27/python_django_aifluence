@@ -745,3 +745,9 @@ CONTRACT_STATUS_CHOICES = (
     ('CA', 'Cancelled'),
     ('CO', 'Completed'),
 )
+
+USER_TYPE_CHOICES = (
+    ('CL', 'Client'),
+    ('AG', 'Agent'),
+    ('IN', 'Influencer'),
+)

@@ -19,7 +19,7 @@ def custom_login(request):
             user = EmailOrUsernameModelBackend.authenticate(request, username=username, password=password)
             
             if user is not None:
-                login(request, user)
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 if request.POST.get('invitation_key'):
                     return redirect('/influencer/profile?invitation_key=' + request.POST.get('invitation_key'))
                 if request.POST.get('discussion_id'):

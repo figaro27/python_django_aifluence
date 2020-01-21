@@ -31,6 +31,7 @@ urlpatterns = [
     path('invitations/', include('invitation.urls')),
     path('campaigns/', include('campaign.urls')),
     path('utils/', include('utils.urls')),
+    path('messages/', include('message.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include('api.urls', namespace='api')),
 ]
