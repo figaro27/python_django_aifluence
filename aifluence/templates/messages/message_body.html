@@ -2,11 +2,11 @@
 <div class="row">
     <div class="col-md-12">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-2 {% if channel_message.sent_by_id != user.id %}text-success{% endif %}">
                 <span class="channel-user">
-                    {{channel_message.sent_by.first_name|slice:"0:2"|upper}}{{channel_message.sent_by.last_name|slice:"0:2"|upper}}
+                    {{channel_message.sent_by.first_name|slice:"0:1"|upper}}{{channel_message.sent_by.last_name|slice:"0:1"|upper}}
                 </span>  
-                <span class="font-weight-bold">{{channel_message.sent_by.first_name|upper|capfirst }} {{channel_message.sent_by.last_name|upper|capfirst }}</span>
+                <span>{{channel_message.sent_by.first_name|title }} {{channel_message.sent_by.last_name|title }}</span>
             </div>
         </div>
         <div class="row mt-1">

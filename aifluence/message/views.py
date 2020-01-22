@@ -16,6 +16,9 @@ def messages(request, *args, **kwargs):
             discussions = Discussion.objects.filter(influencer__user=request.user)
         if request.user.is_staff:
             discussions = Discussion.objects.filter(campaign__agent=request.user)
+        if request.GET.get('invited') == 'true':
+            discussion_id = request.GET.get('id')
+            return render(request, 'messages/index.html', {'menu': 'messages', 'discussions': discussions, 'discussion_id': discussion_id,})
         return render(request, 'messages/index.html', {'menu': 'messages', 'discussions': discussions,})
 
 def create_message(request, *args, **kwargs):
@@ -24,15 +27,23 @@ def create_message(request, *args, **kwargs):
         discussion = Discussion.objects.get(pk=discussion_id)
         content = request.POST.get('content')
         type = request.POST.get('type')
+        
+        message = Message()
         if type == 'IA':
-            message = Message()
             message.sent_by = discussion.influencer.user
             message.sent_to = discussion.campaign.agent
-            message.discussion = discussion
-            message.content = content
-            message.save()
+        if type == 'AI':
+            message.sent_by = discussion.campaign.agent
+            message.sent_to = discussion.influencer.user
+        
+        message.discussion = discussion
+        message.content = content
+        message.save()
+
         return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id),})
 
 def all_channel_messages(request, *args, **kwargs):
     channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk'))
-    return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk')})
+    discussion = Discussion.objects.get(pk=kwargs.get('pk'))
+        
+    return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk'), 'description': discussion})

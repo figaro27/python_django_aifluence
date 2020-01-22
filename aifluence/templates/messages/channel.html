@@ -1,6 +1,27 @@
 <div class="scroll-div" style="height:500px; overflow-x:hidden !important;" class="overflow-auto">
-    <div class="message-body">
-        {% include 'messages/message_body.html' %}
+    <div>
+        <div class="row">
+            <div class="col-md-2 {% if user.is_influencer %}text-success{% endif %}">
+                <span class="channel-user">
+                    {{description.campaign.agent.first_name|slice:"0:1"|upper}}{{description.campaign.agent.last_name|slice:"0:1"|upper}}
+                </span>  
+                <span class="">{{description.campaign.agent.first_name|title }} {{description.campaign.agent.last_name|title }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <span class="ml-5">Brand Name: {{ description.campaign.brand_name }}</span> 
+                <span class="ml-3">Brand Category: {% for category in description.campaign.brand_category %} {{category.0}} {% endfor %}</span><br/>
+                <span class="ml-5">Brand Attributes: {{ desciprition.campaign.brand_attributes }}</span><br/>
+                <span class="ml-5">Key Selling Point: {{ description.campaign.key_selling_point }}</span><br/>
+                <span class="ml-5">Brief: {{ description.campaign.campaign_brief}}</span><br/>
+                <span class="ml-5">Location: {% for ll in location %} {ll.0} {% empty %} All over the world {% endfor %}</span><br/>
+                <p class="ml-5 mt-2"> We highly recommend you to use the posting style of {{ description.posting_suggestion }}  for this campaign after carefully matching your expeirences & campaign details.</p>
+            </div>
+        </div>
+        <div class="message-body mt-2">
+            {% include 'messages/message_body.html' %}
+        </div>
     </div>
 </div>
 <div class="row mt-4 ">
@@ -26,14 +47,17 @@
         $('#send_btn').on('click', function(){
             if($(this).hasClass('disabled'))
                 return false;
-        
+            var message_type = 'IA'
+            {% if not user.is_influencer %}
+                message_type = 'AI'
+            {% endif %}
             $.ajax({
                 url: "/messages/channels/create",
                 method: "post",
                 data: {
                     'discussion_id': $(this).attr('data-id'),
                     'content': $("#id_message").val(),
-                    'type': 'IA',
+                    'type': message_type,
                 },
                 success: function(data) {
                     $(".message-body").html(data)

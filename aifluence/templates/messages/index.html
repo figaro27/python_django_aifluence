@@ -6,7 +6,7 @@
             <div class="col-12 mt-5">
                 <div class="card" style="height:650px;">
                     <div class="card-header">
-                        <h3>Messages</h3>
+                        <h3>Discssions</h3>
                     </div>
                     <div class="card-body d-flex py-2 px-2" style="height: 550px;">
                         <div class="col-2 border-1 border-right overflow-auto p-0" style="height:550px; overflow-x:hidden;">
@@ -17,7 +17,13 @@
                                     </div>
                                     <div class="ml-2 flex-column">
                                         <div>
-                                            <small class="font-weight-bolder">{{ discussion.campaign.agent.first_name }} {{ discussion.campaign.agent.last_name }}</small>
+                                            <small class="font-weight-bolder">
+                                                {% if user.is_influencer %}
+                                                    {{ discussion.campaign.agent.first_name|title }} {{ discussion.campaign.agent.last_name|title }}
+                                                {% else %}
+                                                    {{ discussion.influencer.user.first_name|title }} {{ discussion.influencer.user.last_name|title }}
+                                                {% endif %}
+                                            </small>
                                         </div>
                                         <div style="width:100%;">
                                             <small>
@@ -45,10 +51,23 @@
 {% block extrajs %}
 <script>
     $(document).ready(function(){
+
         $.ajaxSetup({
             headers:
                 { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
         });
+
+        {% if discussion_id %}
+            console.log('asdfasdf')
+            $("div[data-id='"+{{discussion_id}}+"'").addClass('discussion-active')
+            $.ajax({
+                url: "/messages/channels/" + {{discussion_id}},
+                success: function(data){
+                    $(".message-channel").removeAttr('hidden')
+                    $(".message-channel").html(data)
+                }
+            });
+        {% endif %}
 
         $(".discussion").on('click', function(){
             $(this).addClass('discussion-active')

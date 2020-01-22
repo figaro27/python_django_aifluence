@@ -23,7 +23,7 @@ def custom_login(request):
                 if request.POST.get('invitation_key'):
                     return redirect('/influencer/profile?invitation_key=' + request.POST.get('invitation_key'))
                 if request.POST.get('discussion_id'):
-                    return redirect('/campaigns/influencer/discussions/' + request.POST.get('discussion_id'))
+                    return redirect('/messages/id=' + request.POST.get('discussion_id') + '&invited=true')
                 return redirect('dashboard')
             else:
                 form.add_error('username', 'error')
@@ -85,5 +85,5 @@ def influencer_profile(request):
                 invitation_key = request.POST.get('invitation_key')
                 invitation = Invitation.objects.get(invitation_key=invitation_key)
                 discussion_id = create_discussion(invitation, influencer)
-                return redirect('/campaigns/influencer/discussions/' + str(discussion_id))
+                return redirect('/messages/?id=' + str(discussion_id) + '&invited=true')
             return redirect('dashboard')

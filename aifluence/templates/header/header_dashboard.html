@@ -16,6 +16,8 @@
                 {% include 'menu/menu_client.html' %}
             {% elif request.user.is_influencer %}
                 {% include 'menu/menu_influencer.html' %}
+            {% else %}
+                {% include 'menu/menu_agent.html' %}
             {% endif %}
         </div>
         <a class="ml-5" href="{% url 'logout' %}">
