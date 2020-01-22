@@ -8,6 +8,10 @@
     Contracts
 {% endblock %}
 
+{% block actions %}
+    <a href="#" class="btn btn-primary btn-sm add-btn"><i class="fe fe-plus"></i> Add new contract</a>
+{% endblock %}
+
 {% block list %}
 {% csrf_token %}
 <table class="table table-borderless table-vcenter mt-3">

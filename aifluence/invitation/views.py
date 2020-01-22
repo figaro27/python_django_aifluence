@@ -28,7 +28,7 @@ def influencer_invitations(request):
             'menu':'invitations',
             'invitation_list': invitation_list
         })
-        return render(request, 'invitation/influencer_invitations.html', context)
+        return render(request, 'invitation/index.html', context)
 
 def invitation_create(request):
     if request.method == 'POST':
@@ -77,7 +77,7 @@ def invitation_accepted(request, invitation_key=None):
         if (users.count() > 0):
             discussion_id = create_discussion(invitation, users.first())
             if request.user.is_authenticated:
-                return redirect('/campaigns/influencer/discussions/'+str(discussion_id))
+                return redirect('/messages/?id=' + str(discussion_id) + '&invited=true')
             else:
                 return redirect('/login?discussion_id='+str(discussion_id))
         else:

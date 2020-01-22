@@ -47,10 +47,12 @@
         $('#send_btn').on('click', function(){
             if($(this).hasClass('disabled'))
                 return false;
-            var message_type = 'IA'
+            var message_type = 'IA';
+
             {% if not user.is_influencer %}
-                message_type = 'AI'
+                message_type = 'AI';
             {% endif %}
+
             $.ajax({
                 url: "/messages/channels/create",
                 method: "post",
@@ -60,7 +62,9 @@
                     'type': message_type,
                 },
                 success: function(data) {
-                    $(".message-body").html(data)
+                    $("#id_message").val("");
+                    $('#send_btn').addClass('disabled');
+                    $(".message-body").html(data);
                 }
             })
         });

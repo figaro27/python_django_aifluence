@@ -58,24 +58,25 @@
         });
 
         {% if discussion_id %}
-            console.log('asdfasdf')
-            $("div[data-id='"+{{discussion_id}}+"'").addClass('discussion-active')
+            $("div[data-id='"+{{discussion_id}}+"'").addClass('discussion-active');
+
             $.ajax({
                 url: "/messages/channels/" + {{discussion_id}},
                 success: function(data){
-                    $(".message-channel").removeAttr('hidden')
-                    $(".message-channel").html(data)
+                    $(".message-channel").removeAttr('hidden');
+                    $(".message-channel").html(data);
                 }
             });
         {% endif %}
 
         $(".discussion").on('click', function(){
-            $(this).addClass('discussion-active')
+            $(this).addClass('discussion-active');
+
             $.ajax({
                 url: "/messages/channels/" + $(this).attr('data-id'),
                 success: function(data){
-                    $(".message-channel").removeAttr('hidden')
-                    $(".message-channel").html(data)
+                    $(".message-channel").removeAttr('hidden');
+                    $(".message-channel").html(data);
                 }
             });
         })

@@ -23,7 +23,7 @@ def custom_login(request):
                 if request.POST.get('invitation_key'):
                     return redirect('/influencer/profile?invitation_key=' + request.POST.get('invitation_key'))
                 if request.POST.get('discussion_id'):
-                    return redirect('/messages/id=' + request.POST.get('discussion_id') + '&invited=true')
+                    return redirect('/messages/?id=' + request.POST.get('discussion_id') + '&invited=true')
                 return redirect('dashboard')
             else:
                 form.add_error('username', 'error')
