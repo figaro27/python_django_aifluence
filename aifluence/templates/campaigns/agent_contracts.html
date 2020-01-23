@@ -8,8 +8,8 @@
     Contracts
 {% endblock %}
 
-{% block actions %}
-    <a href="#" class="btn btn-primary btn-sm add-btn"><i class="fe fe-plus"></i> Add new contract</a>
+{% block add_button %}
+    <a href="#" class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i> Create new contract</a>
 {% endblock %}
 
 {% block list %}
@@ -17,7 +17,8 @@
 <table class="table table-borderless table-vcenter mt-3">
     <thead class="border-bottom">
         <th class="text-left d-md-table-cell text-nowrap">Campaign</th>
-        <th class="text-left d-md-table-cell text-nowrap">Agent</th>
+        <th class="text-left d-md-table-cell text-nowrap">Client</th>
+        <th class="text-left d-md-table-cell text-nowrap">Influencer</th>
         <th class="text-left d-md-table-cell text-nowrap">Terms</th>
         <th class="text-left d-md-table-cell text-nowrap">Status</th>
         <th></th>
@@ -26,7 +27,8 @@
         {% for item in contract_list %}
         <tr class="border-bottom">
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.campaign }}</td>
-            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.campaign.agent }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.campaign.client }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.influencer.user }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.contract_terms }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.contract_status }}</td>
             <td class="text-right d-md-table-cell text-nowrap ">

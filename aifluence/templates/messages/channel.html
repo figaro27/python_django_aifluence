@@ -65,6 +65,7 @@
                     $("#id_message").val("");
                     $('#send_btn').addClass('disabled');
                     $(".message-body").html(data);
+                    $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
                 }
             })
         });

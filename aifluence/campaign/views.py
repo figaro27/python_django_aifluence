@@ -72,21 +72,29 @@ def campaign_invite_influencers(request, *args, **kwargs):
         return render(request, 'campaigns/invite_influencers.html', context)
 
 #influencer contracts
-class InfluencerContracts(ListView):
+class ContractListView(ListView):
     model = Contract
-    template_name = 'campaigns/influencer_contracts.html'
     context_object_name = 'contract_list'
 
     def get_context_data(self, **kwargs):
-        context = super(InfluencerContracts, self).get_context_data(**kwargs)
+        context = super(ContractListView, self).get_context_data(**kwargs)
         context.update({
             'menu':'contracts'
         })
         return context
     
     def get_queryset(self):
-        queryset = Contract.objects.filter(discussion__influencer__user=self.request.user)
+        if self.request.user.is_influencer:
+            queryset = Contract.objects.filter(discussion__influencer__user=self.request.user)
+        else:
+            queryset = Contract.objects.filter(discussion__campaign__agent=self.request.user)
         return queryset
+
+    def get_template_names(self):
+        if self.request.user.is_influencer:
+            return ['campaigns/influencer_contracts.html']
+        else:
+            return ['campaigns/agent_contracts.html']
 
 class InfluencerDiscussions(ListView):
     model = Discussion
