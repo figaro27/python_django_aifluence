@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import Input
 from crispy_forms.helper import FormHelper
-from .models import Campaign
+from .models import Campaign, Contract
 
 class CampaignForm(forms.ModelForm):
     class Meta:
@@ -28,3 +28,9 @@ class CampaignForm(forms.ModelForm):
         self.fields['social_status'].required = False
         self.fields['location'].required = False
         self.fields['interests'].required = False
+
+# class ContractForm(forms.ModelForm):
+#     class Meta:
+#         model = Contract
+#         fields = ['']
+#         widgets = 

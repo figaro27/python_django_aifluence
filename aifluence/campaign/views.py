@@ -71,7 +71,7 @@ def campaign_invite_influencers(request, *args, **kwargs):
         context['campaign_id'] = campaign_id
         return render(request, 'campaigns/invite_influencers.html', context)
 
-#influencer contracts
+#contracts
 class ContractListView(ListView):
     model = Contract
     context_object_name = 'contract_list'
@@ -123,3 +123,4 @@ def create_discussion(invitation, influencer):
     discussion.save()
     return discussion.id
 
+# def offer_contract(reqeust, *args, **kwargs):

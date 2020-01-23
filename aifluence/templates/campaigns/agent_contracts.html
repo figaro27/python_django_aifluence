@@ -9,7 +9,6 @@
 {% endblock %}
 
 {% block add_button %}
-    <a href="#" class="btn btn-primary btn-sm float-right"><i class="fa fa-plus"></i> Create new contract</a>
 {% endblock %}
 
 {% block list %}
@@ -30,7 +29,7 @@
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.campaign.client }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.influencer.user }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.contract_terms }}</td>
-            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.contract_status }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.get_contract_status_display }}</td>
             <td class="text-right d-md-table-cell text-nowrap ">
                 <a href="#" class="btn btn-info btn-sm mt-1" style="width:120px;"> View </a>
             </td>

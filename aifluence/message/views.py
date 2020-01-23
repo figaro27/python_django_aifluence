@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.http import HttpResponseNotFound, HttpResponse, JsonResponse
 from datetime import date, datetime
 
-from campaign.models import Discussion
+from campaign.models import Discussion, Contract
 from message.models import Message
 # Create your views here.
 
@@ -32,14 +32,23 @@ def create_message(request, *args, **kwargs):
         if type == 'IA':
             message.sent_by = discussion.influencer.user
             message.sent_to = discussion.campaign.agent
-        if type == 'AI':
+        if type == 'AI' or type == 'CO':
             message.sent_by = discussion.campaign.agent
             message.sent_to = discussion.influencer.user
-        
+
         message.discussion = discussion
         message.content = content
         message.save()
 
+        if type == 'CO':
+            budget = request.POST.get('budget')
+            contract = Contract()
+            contract.contract_terms = request.POST.get('terms')
+            contract.contract_status = 'OF'
+            contract.contract_budget = budget
+            contract.discussion = discussion
+            contract.save()
+            
         return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id),})
 
 def all_channel_messages(request, *args, **kwargs):

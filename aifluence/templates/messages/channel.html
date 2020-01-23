@@ -1,22 +1,30 @@
 <div class="scroll-div" style="height:500px; overflow-x:hidden !important;" class="overflow-auto">
     <div>
-        <div class="row">
-            <div class="col-md-2 {% if user.is_influencer %}text-success{% endif %}">
+        <div class="d-flex justify-content-between">
+            <div class="{% if user.is_influencer %}text-success{% endif %}">
                 <span class="channel-user">
                     {{description.campaign.agent.first_name|slice:"0:1"|upper}}{{description.campaign.agent.last_name|slice:"0:1"|upper}}
                 </span>  
-                <span class="">{{description.campaign.agent.first_name|title }} {{description.campaign.agent.last_name|title }}</span>
+                <span class="" style="line-height: 40px;">{{description.campaign.agent.first_name|title }} {{description.campaign.agent.last_name|title }}</span>
             </div>
+            {% if user.is_staff %}
+            <div>
+                <a class="btn btn-sm text-white bg-primary" id="open_offer_modal" data-id="{{discussion_id}}"><i class="fa fa-plus"></i>Offer Contract</a>
+            </div>
+            {% endif %}
         </div>
         <div class="row">
-            <div class="col-md-12">
-                <span class="ml-5">Brand Name: {{ description.campaign.brand_name }}</span> 
+            <div class="col-md-10">
+                <span class="ml-5">Brand Name: {{ description.campaign.brand_name }}</span>
                 <span class="ml-3">Brand Category: {% for category in description.campaign.brand_category %} {{category.0}} {% endfor %}</span><br/>
                 <span class="ml-5">Brand Attributes: {{ desciprition.campaign.brand_attributes }}</span><br/>
                 <span class="ml-5">Key Selling Point: {{ description.campaign.key_selling_point }}</span><br/>
                 <span class="ml-5">Brief: {{ description.campaign.campaign_brief}}</span><br/>
                 <span class="ml-5">Location: {% for ll in location %} {ll.0} {% empty %} All over the world {% endfor %}</span><br/>
                 <p class="ml-5 mt-2"> We highly recommend you to use the posting style of {{ description.posting_suggestion }}  for this campaign after carefully matching your expeirences & campaign details.</p>
+            </div>
+            <div class="col-md-2">
+                <small>{% now "d M H:i" %}</small>
             </div>
         </div>
         <div class="message-body mt-2">
@@ -32,10 +40,39 @@
         <a class="btn text-white bg-success disabled" id="send_btn" data-id="{{discussion_id}}">Send</a>
     </div>
 </div>
+<div id="offer_modal" class="modal fade" tabindex="-2" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="id_contract_budget">Terms*</label> <br/>
+                    <textarea name="message" cols="500" rows="10" maxlength="4000" placeholder="" class="textarea form-control mb-2" id="id_contract_terms"></textarea>
+                    <div class="invalid-terms invalid-feedback">
+                        This field is required!
+                    </div>
+                <label for="id_contract_budget">Budge* </label> <br/>
+                    {% if description.campaign.campaign_currency == 'usd' %}${% else %}€{% endif %} <input type="number" id="id_contract_budget"/>
+                    <div class="invalid-budget invalid-feedback">
+                        This field is required!
+                    </div>
+                    <div class="invalid-budget-number invalid-feedback">
+                        This field must be number!
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn text-white bg-primary" id="offer_btn" data-id="{{discussion_id}}">Offer Contract</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function() {
         $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
-
+        
         $('#id_message').on('keyup', function(){
             if ($(this).val() === ""){
                 $('#send_btn').addClass('disabled');        
@@ -69,5 +106,56 @@
                 }
             })
         });
+
+        $("#open_offer_modal").on('click', function(){
+            hidden_invalid();
+            $("#offer_modal").modal('show');
+        })
+
+        $("#offer_btn").on('click', function(){
+            if ($("#id_contract_terms").val() == "" ) {
+                $(".invalid-terms").css('display', 'block');
+                return false;
+            }
+
+            if ($("#id_contract_budget").val() == "") {
+                $(".invalid-budget").css('display', 'block');
+                return false;
+            }
+
+            if (isNaN($("#id_contract_budget").val())) {
+                $(".invalid-budget-number").css('display', 'block');
+                return false;
+            }
+
+            var currency = '$';
+            {% if description.campaign.campaign_currency == 'eur' %}
+                currency = '€';
+            {% endif %}
+
+            $.ajax({
+                url: "/messages/channels/create",
+                method: "post",
+                data: {
+                    'discussion_id': $(this).attr('data-id'),
+                    'content': '<span class="font-weight-bolder">Contract Offered</span><br/><br/>Terms: ' + $("#id_contract_terms").val() + "<br/> Budget: " + currency + $("#id_contract_budget").val(),
+                    'terms': $("#id_contract_terms").val(),
+                    'type': 'CO',
+                    'budget': $("#id_contract_budget").val(),
+                },
+                success: function(data) {
+                    $("#id_message").val("");
+                    $('#send_btn').addClass('disabled');
+                    $(".message-body").html(data);
+                    $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+                }
+            })
+        })
+
+        function hidden_invalid(){
+            $(".invalid-terms").css('display', 'none');
+            $(".invalid-budget").css('display', 'none');
+            $(".invalid-budget-number").css('display', 'none');
+        }
     });
 </script>

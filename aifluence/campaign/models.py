@@ -71,7 +71,8 @@ class Discussion(models.Model):
 class Contract(models.Model):
     discussion = models.ForeignKey(Discussion, on_delete=CASCADE, null=True)
     contract_terms = JSONField(null=True)
-    contract_status = models.CharField(max_length=2, choices=CONSTANTS.CONTRACT_STATUS_CHOICES, default='OT')
+    contract_status = models.CharField(max_length=2, choices=CONSTANTS.CONTRACT_STATUS_CHOICES, default='OF')
+    contract_budget = models.IntegerField(null=True, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

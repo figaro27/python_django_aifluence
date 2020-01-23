@@ -70,6 +70,7 @@
         {% endif %}
 
         $(".discussion").on('click', function(){
+            $(".discussion-active").removeClass('discussion-active')
             $(this).addClass('discussion-active');
 
             $.ajax({
