@@ -2,6 +2,28 @@
 {% block content %}
     {% csrf_token %}
     <div class="container">
+        <div id="agreement_modal" class="modal fade" tabindex="-2" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            <label for="id_contract_comment">Comment*</label> <br/>
+                            <textarea name="message" cols="500" rows="10" maxlength="4000" placeholder="" class="textarea form-control mb-2" id="id_contract_comment"></textarea>
+                            <div class="invalid-contract-agreement invalid-feedback">
+                                This field is required!
+                            </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end">
+                        <button type="button" class="btn text-white bg-primary contract-agreement-btn" id="accept_contract_btn" data-id="">Accept</button>
+                        <button type="button" class="btn btn-secondary contract-agreement-btn" id="decline_contract_btn" data-id="">Decline</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12 mt-5">
                 <div class="card" style="height:650px;">
@@ -40,7 +62,6 @@
                         <div class="col-10 message-channel" hidden style="height:550px;">
                             {% include 'messages/channel.html' %}
                         </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -67,10 +88,11 @@
                     $(".message-channel").html(data);
                 }
             });
+
         {% endif %}
 
         $(".discussion").on('click', function(){
-            $(".discussion-active").removeClass('discussion-active')
+            $(".discussion-active").removeClass('discussion-active');
             $(this).addClass('discussion-active');
 
             $.ajax({
@@ -80,7 +102,47 @@
                     $(".message-channel").html(data);
                 }
             });
-        })
+        });
+
+        $(".contract-agreement-btn").on('click', function() {
+            if ($("#id_contract_comment").val() == "" ) {
+                $(".invalid-contract-agreement").css('display', 'block');
+                return false;
+            }
+
+            var agreement = 1;
+            if ($(this).attr('id') == 'decline_contract_btn') {
+                agreement = 0;
+            }
+
+            $.ajax({
+                url: "/campaigns/contracts/offer/" + $(this).attr('data-id') + "/agreement",
+                data: {
+                    'agreement' : agreement,
+                    'comment' : $("#id_contract_comment").val(),
+                    'message_id' : $(this).attr('data-message'),
+                },
+                method: 'post',
+                success: function(data){
+                    $("#agreement_modal").modal('hide');
+                    $(".message-body").html(data);
+                }
+            })
+
+        });
     });
+
+    function contract_agree(e) {
+        {% if user.is_influencer %}
+            var contract_id = $(e).data("id");
+            var message_id = $(e).parent().attr('data-id');
+            $("#accept_contract_btn").attr("data-id", contract_id);
+            $("#decline_contract_btn").attr("data-id", contract_id);
+            $("#accept_contract_btn").attr("data-message", message_id);
+            $("#decline_contract_btn").attr("data-message", message_id);
+            $(".invalid-contract-agreement").css('display', 'none');
+            $("#agreement_modal").modal('show');
+        {% endif %}
+    }
 </script>
 {% endblock %}

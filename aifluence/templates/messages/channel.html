@@ -23,9 +23,6 @@
                 <span class="ml-5">Location: {% for ll in location %} {ll.0} {% empty %} All over the world {% endfor %}</span><br/>
                 <p class="ml-5 mt-2"> We highly recommend you to use the posting style of {{ description.posting_suggestion }}  for this campaign after carefully matching your expeirences & campaign details.</p>
             </div>
-            <div class="col-md-2">
-                <small>{% now "d M H:i" %}</small>
-            </div>
         </div>
         <div class="message-body mt-2">
             {% include 'messages/message_body.html' %}
@@ -48,12 +45,17 @@
                 </button>
             </div>
             <div class="modal-body">
+                <label for="id_contract_title">Title*</label> <br/>
+                <input placeholder="" class="textarea form-control mb-2" id="id_contract_title"/>
+                    <div class="invalid-title invalid-feedback">
+                        This field is required!
+                    </div>
                 <label for="id_contract_budget">Terms*</label> <br/>
                     <textarea name="message" cols="500" rows="10" maxlength="4000" placeholder="" class="textarea form-control mb-2" id="id_contract_terms"></textarea>
                     <div class="invalid-terms invalid-feedback">
                         This field is required!
                     </div>
-                <label for="id_contract_budget">Budge* </label> <br/>
+                <label for="id_contract_budget">Budget* </label> <br/>
                     {% if description.campaign.campaign_currency == 'usd' %}${% else %}€{% endif %} <input type="number" id="id_contract_budget"/>
                     <div class="invalid-budget invalid-feedback">
                         This field is required!
@@ -113,7 +115,11 @@
         })
 
         $("#offer_btn").on('click', function(){
-            if ($("#id_contract_terms").val() == "" ) {
+            if ($("#id_contract_title").val() == "") {
+                $(".invalid-title").css('display', 'block');
+            }
+
+            if ($("#id_contract_terms").val() == "") {
                 $(".invalid-terms").css('display', 'block');
                 return false;
             }
@@ -133,12 +139,17 @@
                 currency = '€';
             {% endif %}
 
+            var contract_offer_message = 'Contract <span class="text-info">' + $("#id_contract_title").val() + '</span> offered!<br/><br/>Terms: ' + 
+                                        $("#id_contract_terms").val() + '<br/> Budget: ' + 
+                                        currency + $("#id_contract_budget").val();
+
             $.ajax({
                 url: "/messages/channels/create",
                 method: "post",
                 data: {
                     'discussion_id': $(this).attr('data-id'),
-                    'content': '<span class="font-weight-bolder">Contract Offered</span><br/><br/>Terms: ' + $("#id_contract_terms").val() + "<br/> Budget: " + currency + $("#id_contract_budget").val(),
+                    'content': contract_offer_message,
+                    'title': $("#id_contract_title").val(),
                     'terms': $("#id_contract_terms").val(),
                     'type': 'CO',
                     'budget': $("#id_contract_budget").val(),
@@ -148,6 +159,7 @@
                     $('#send_btn').addClass('disabled');
                     $(".message-body").html(data);
                     $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+                    $("#offer_modal").modal('hide');
                 }
             })
         })
@@ -156,6 +168,7 @@
             $(".invalid-terms").css('display', 'none');
             $(".invalid-budget").css('display', 'none');
             $(".invalid-budget-number").css('display', 'none');
+            $(".invalid-title").css('display', 'none');
         }
     });
 </script>

@@ -5,6 +5,7 @@ from django.db.models.expressions import RawSQL
 from campaign.models import Campaign, Contract, Discussion
 from influencer.models import Analysis
 from invitation.models import Invitation
+from message.models import Message
 from .forms import CampaignForm
 import aifluence.constants as CONSTANTS
 
@@ -95,6 +96,37 @@ class ContractListView(ListView):
             return ['campaigns/influencer_contracts.html']
         else:
             return ['campaigns/agent_contracts.html']
+
+def contract_offer_agreement(request, *args, **kwargs):
+    if request.method == 'POST':
+        contract_id = kwargs.get('pk')
+        contract = Contract.objects.get(pk=contract_id)
+        agreement = request.POST.get('agreement')
+        comment = request.POST.get('comment')
+        message_id = request.POST.get('message_id')
+        message = Message()
+        message.sent_by = contract.discussion.influencer.user
+        message.sent_to = contract.discussion.campaign.agent
+        message.discussion = contract.discussion
+
+        content = ''
+        contract_status = 'AC'
+        if (agreement == 0):
+            content = "The contract <span class='font-weight-bold'>" + contract.contract_title + "</span> has been declined.<br/>" + comment
+            contract_status = 'DE'
+        else:
+            content = "<span class='text-success'>Congratulations!</span><br/>The contract <span class='font-weight-bold'>" + contract.contract_title + "</span> has been accepted.<br/>" + comment 
+        message.content = content
+        message.save()
+
+        contract.contract_status = contract_status
+        contract.save()
+
+        offer_message = Message.objects.get(pk=message_id)
+        offer_message.content = offer_message.content.replace("contract_agree(this)", "")
+        offer_message.save()
+
+        return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion=contract.discussion).order_by('sent_at'),})
 
 class InfluencerDiscussions(ListView):
     model = Discussion

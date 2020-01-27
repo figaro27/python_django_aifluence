@@ -28,6 +28,18 @@ def create_message(request, *args, **kwargs):
         content = request.POST.get('content')
         type = request.POST.get('type')
         
+
+        if type == 'CO':
+            budget = request.POST.get('budget')
+            contract = Contract()
+            contract.contract_title = request.POST.get('title')
+            contract.contract_terms = request.POST.get('terms')
+            contract.contract_status = 'OF'
+            contract.contract_budget = budget
+            contract.discussion = discussion
+            contract.save()
+            content = content + "<br/>You can accept or decline this offer <a href='#' onclick='contract_agree(this)' data-id='" + str(contract.id) + "'>here</a>!"
+            
         message = Message()
         if type == 'IA':
             message.sent_by = discussion.influencer.user
@@ -40,19 +52,10 @@ def create_message(request, *args, **kwargs):
         message.content = content
         message.save()
 
-        if type == 'CO':
-            budget = request.POST.get('budget')
-            contract = Contract()
-            contract.contract_terms = request.POST.get('terms')
-            contract.contract_status = 'OF'
-            contract.contract_budget = budget
-            contract.discussion = discussion
-            contract.save()
-            
-        return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id),})
+        return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id).order_by('sent_at'),})
 
 def all_channel_messages(request, *args, **kwargs):
-    channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk'))
+    channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk')).order_by('sent_at')
     discussion = Discussion.objects.get(pk=kwargs.get('pk'))
         
     return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk'), 'description': discussion})
