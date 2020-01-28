@@ -63,3 +63,10 @@ label {
   display: inline-block;
   vertical-align: middle;
 }
+
+span.media-status {
+  width: 140px;
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+}

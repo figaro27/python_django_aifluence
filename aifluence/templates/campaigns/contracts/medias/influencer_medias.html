@@ -1,0 +1,116 @@
+{% extends 'layouts/tab_list_template.html' %}
+{% load static %}
+
+{% block actions %}
+    <a href="#" id="add_new_media" class="btn btn-info btn-sm float-right" style="width:120px;"><i class="fa fa-plus"></i> New Media</a><br/>
+{% endblock %}
+
+{% block list %}
+<div id="media_modal" class="modal fade" tabindex="-2" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="media_form" method="post" action="{% url 'media_create' pk=contract.id %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="id_media_title">Title*</label> <br/>
+                    <input placeholder="" class="form-control mb-2" id="id_media_title" name="media_title"/>
+                        <div class="invalid-title invalid-feedback">
+                            This field is required!
+                        </div>
+                    <label for="id_media_file">Media*</label> <br/>
+                        <input class="form-control" type="file" name="media_file" id="id_media_file" />
+                        <div class="invalid-file invalid-feedback">
+                            This field is required!
+                        </div>
+                        <div class="invalid-filetype invalid-feedback">
+                            You have uploaded an invalid media file type.
+                            The file must be image or video.
+                        </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn text-white bg-primary" id="save_media">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="media-table" style="height:400px; overflow-y:auto;">
+<table class="table table-borderless table-vcenter mt-3">
+    <thead class="border-bottom">
+        <th class="text-left d-md-table-cell text-nowrap">Title</th>
+        <th class="text-left d-md-table-cell text-nowrap">Media</th>
+        <th class="text-left d-md-table-cell text-nowrap">Status</th>
+        <th class="text-left d-md-table-cell text-nowrap">Created At</th>
+    </thead>
+    <tbody>
+        {% for item in media_list %}
+        <tr class="border-bottom">
+            <td class="text-left d-md-table-celltext-nowrap align-middle">{{ item.title }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                <a href="{{item.media.url}}" download="">
+                {{ item.file_name }}
+                </a>
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                {% if item.status == 'CR' %}
+                <span class="media-status d-block text-white bg-success">{{ item.get_status_display }}</span>
+                {% elif item.status == 'AC' %}
+                <span class="media-status d-block text-white bg-primary">{{ item.get_status_display }}</span>
+                {% else %}
+                <span class="media-status d-block text-white bg-secondary">{{ item.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.created_at|date:'d M Y' }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td align="center" colspan="5" class="align-content-center">
+                <p>No medias.</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock%}
+
+{% block extrajs %}
+<script>
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        $("#add_new_media").on('click', function() {
+            $("#media_modal").modal('show')
+        })
+
+        $("#save_media").on('click', function() {
+            if ($("#id_media_title").val() == "") {
+                $(".invalid-title").css('display', 'block')
+                return false
+            }
+
+            if ($("#id_media_file").val() == "") {
+                $(".invalid-file").css('display', 'block')
+                return false
+            }
+
+            var ext = $('#id_media_file').val().split('.').pop().toLowerCase()
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                $(".invalid-filetype").css('display', 'block')
+                return false
+            }
+
+            $("#media_form").submit()
+
+        })
+    })
+</script>
+{% endblock %}

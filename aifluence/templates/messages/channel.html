@@ -117,6 +117,7 @@
         $("#offer_btn").on('click', function(){
             if ($("#id_contract_title").val() == "") {
                 $(".invalid-title").css('display', 'block');
+                return false;
             }
 
             if ($("#id_contract_terms").val() == "") {

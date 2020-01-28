@@ -1,0 +1,36 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Contracts</title>
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="mt-5">
+        <nav>
+            <div class="nav nav-pills" id="nav-tab" role="tablist">
+                <a class="nav-item nav-link active" id="nav-activte-tab" data-toggle="tab" href="#nav-activte" role="tab" aria-controls="nav-activte" aria-selected="true">Active</a>
+                <a class="nav-item nav-link" id="nav-past-tab" data-toggle="tab" href="#nav-past" role="tab" aria-controls="nav-past" aria-selected="false">Archived</a>
+            </div>
+        </nav>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane active" id="nav-activte" role="tabpanel" aria-labelledby="nav-activte-tab">
+                {% if user.is_staff %}
+                    {% include 'campaigns/contracts/agent_contracts.html' %}
+                {% else %}
+                    {% include 'campaigns/contracts/influencer_contracts.html' %}
+                {% endif %}
+            </div>
+            <div class="tab-pane" id="nav-past" role="tabpanel" aria-labelledby="nav-past-tab">
+                {% if user.is_staff %}
+                    {% include 'campaigns/contracts/archived_agent_contracts.html' %}
+                {% else %}
+                    {% include 'campaigns/contracts/archived_influencer_contracts.html' %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 
-from campaign.models import Campaign, Contract, Discussion
+from campaign.models import Campaign, Contract, Discussion, Media
 from influencer.models import Analysis
 from invitation.models import Invitation
 from message.models import Message
+from users.models import Influencer
 from .forms import CampaignForm
 import aifluence.constants as CONSTANTS
 
@@ -76,7 +77,7 @@ def campaign_invite_influencers(request, *args, **kwargs):
 class ContractListView(ListView):
     model = Contract
     context_object_name = 'contract_list'
-
+    template_name = 'campaigns/contracts/contract_index.html'
     def get_context_data(self, **kwargs):
         context = super(ContractListView, self).get_context_data(**kwargs)
         context.update({
@@ -91,11 +92,14 @@ class ContractListView(ListView):
             queryset = Contract.objects.filter(discussion__campaign__agent=self.request.user)
         return queryset
 
-    def get_template_names(self):
-        if self.request.user.is_influencer:
-            return ['campaigns/influencer_contracts.html']
-        else:
-            return ['campaigns/agent_contracts.html']
+def contract_view(request, *args, **kwargs):
+    if request.method == 'GET':
+        contract_id = kwargs.get('pk')
+        contract = Contract.objects.get(pk=contract_id)
+        post_actived = True
+        if (request.GET.get('post_actived') == '0'):
+            post_actived = False
+        return render(request, 'campaigns/contracts/contract_view.html', {'menu': 'contracts', 'contract': contract, 'media_list': Media.objects.filter(contract=contract).order_by('created_at'), 'post_actived': post_actived})
 
 def contract_offer_agreement(request, *args, **kwargs):
     if request.method == 'POST':
@@ -155,4 +159,46 @@ def create_discussion(invitation, influencer):
     discussion.save()
     return discussion.id
 
-# def offer_contract(reqeust, *args, **kwargs):
+def media_create(request, *args, **kwargs):
+    if request.method == 'POST':
+        contract_id = kwargs.get('pk')
+        contract = Contract.objects.get(pk=contract_id)
+        media = Media()
+        media.title = request.POST.get('media_title')
+        media.media = request.FILES['media_file']
+        media.file_name = request.FILES['media_file'].name
+        media.upload_by = Influencer.objects.get(user=request.user)
+        media.contract = contract
+        media.save()
+
+        message = Message()
+        message.sent_by = contract.discussion.influencer.user
+        message.sent_to = contract.discussion.campaign.agent
+        message.discussion = contract.discussion
+        message.content = "I have uploaded post media. Please take a look and let me know your thought."
+        message.save()
+
+        return redirect('/campaigns/contracts/' + str(contract_id) + '?post_actived=0')
+
+def media_agreement(request, *args, **kwargs):
+    if request.method == 'GET':
+        media_id = kwargs.get('pk')
+        media = Media.objects.get(pk=media_id)
+        agreement = request.GET.get('accepted')
+        content = ''
+        if agreement == 'true':
+            media.status = 'AC'
+            content = "Your post <span class='font-weight-bold'>" + media.title + "</span> has been accepted. Please post and let me know the post url."
+        else:
+            media.status = 'DE'
+            content = "Your post <span class='font-weight-bold'>" + media.title + "</span> has been declined."
+        media.save()
+
+        message = Message()
+        message.sent_by = media.contract.discussion.campaign.agent
+        message.sent_to = media.contract.discussion.influencer.user
+        message.discussion = media.contract.discussion
+        message.content = content
+        message.save()
+
+        return redirect('/campaigns/contracts/' + str(media.contract.id) + '?post_actived=0')    

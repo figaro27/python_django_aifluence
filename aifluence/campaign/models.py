@@ -79,3 +79,13 @@ class Contract(models.Model):
 
     def __str__(self):
         return self.discussion.campaign + " - " + self.discussion.campaign.client + " - " + self.discussion.influencer
+
+class Media(models.Model):
+    title = models.CharField(max_length=60, blank=True, null=True)
+    file_name = models.CharField(max_length=30, blank=True, null=True)
+    upload_by = models.ForeignKey(Influencer, on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    media = models.FileField(upload_to='%Y/%m/%d')
+    contract = models.ForeignKey(Contract, on_delete=CASCADE, null=True)
+    status = models.CharField(max_length=2, choices=CONSTANTS.POST_STATUS_CHOICES, default='CR')
+

@@ -1,0 +1,48 @@
+{% extends 'layouts/tab_list_template.html' %}
+{% load static %}
+
+{% block table_title %}
+    Archived Contracts
+{% endblock %}
+
+{% block add_button %}
+{% endblock %}
+
+{% block list %}
+{% csrf_token %}
+<table class="table table-borderless table-vcenter mt-3">
+    <thead class="border-bottom">
+        <th class="text-left d-md-table-cell text-nowrap">Title</th>
+        <th class="text-left d-md-table-cell text-nowrap">Campaign</th>
+        <th class="text-left d-md-table-cell text-nowrap">Client</th>
+        <th class="text-left d-md-table-cell text-nowrap">Influencer</th>
+        <th class="text-left d-md-table-cell text-nowrap">Budget</th>
+        <th class="text-left d-md-table-cell text-nowrap">Status</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for item in contract_list %}
+            {% if item.contract_status in 'DE,CA,CO' %}
+            <tr class="border-bottom">
+                <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.contract_title }}</td>
+                <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.campaign }}</td>
+                <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.campaign.client }}</td>
+                <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.discussion.influencer.user }}</td>
+                <td class="text-left d-md-table-cell text-nowrap align-middle">{% if contract.discussion.campaign.campaign_currency == 'usd' %}$ {% else %}€ {% endif %}{{ contract.contract_budget }}</td>
+                <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.get_contract_status_display }}</td>
+                <td class="text-right d-md-table-cell text-nowrap ">
+                    <a href="#" class="btn btn-info btn-sm mt-1" style="width:120px;"> View </a>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock%}
+
+{% block table_footer %}
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-sm text-white float-right">Back</a>
+{% endblock %}
+
+{% block extrajs %}
+{% endblock %}

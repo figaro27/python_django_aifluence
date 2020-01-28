@@ -741,6 +741,7 @@ PLATFORM_CHOICES = (
 CONTRACT_STATUS_CHOICES = (
     ('OF', 'Offered'),
     ('AC', 'Accepted'),
+    ('PO', 'Posted'),
     ('DE', 'Declined'),
     ('CA', 'Cancelled'),
     ('CO', 'Completed'),
@@ -750,4 +751,10 @@ USER_TYPE_CHOICES = (
     ('CL', 'Client'),
     ('AG', 'Agent'),
     ('IN', 'Influencer'),
+)
+
+POST_STATUS_CHOICES = (
+    ('CR', 'Waiting for approval'),
+    ('AC', 'Accepted'),
+    ('DE', 'Declined'),
 )

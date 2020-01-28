@@ -1,0 +1,90 @@
+{% extends 'layouts/tab_list_template.html' %}
+{% load static %}
+
+{% block actions %}
+{% endblock %}
+
+{% block list %}
+<div class="media-table" style="height:400px; overflow-y:auto;">
+<table class="table table-borderless table-vcenter mt-3">
+    <thead class="border-bottom">
+        <th class="text-left d-md-table-cell text-nowrap">Title</th>
+        <th class="text-left d-md-table-cell text-nowrap">Media</th>
+        <th class="text-left d-md-table-cell text-nowrap">Status</th>
+        <th class="text-left d-md-table-cell text-nowrap">Created At</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for item in media_list %}
+        <tr class="border-bottom">
+            <td class="text-left d-md-table-celltext-nowrap align-middle">{{ item.title }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                <a href="{{item.media.url}}" download="">
+                {{ item.file_name }}
+                </a>
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                {% if item.status == 'CR' %}
+                <span class="media-status d-block text-white bg-success">{{ item.get_status_display }}</span>
+                {% elif item.status == 'AC' %}
+                <span class="media-status d-block text-white bg-primary">{{ item.get_status_display }}</span>
+                {% else %}
+                <span class="media-status d-block text-white bg-secondary">{{ item.get_status_display }}</span>
+                {% endif %}
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.created_at|date:'d M Y' }}</td>
+            <td class="text-right d-none d-md-table-cell text-nowrap ">
+                {% if item.status == 'CR' %}
+                    <a href="{% url 'media_agreement' pk=item.id %}?accepted=true" class="btn btn-secondary btn-sm" style="width:120px;"> Accept</a><br/>
+                    <a href="{% url 'media_agreement' pk=item.id %}?accepted=false" class="btn btn-info btn-sm mt-1" style="width:120px;"> Decline </a>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td align="center" colspan="5" class="align-content-center">
+                <p>No medias.</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock%}
+
+{% block extrajs %}
+<script>
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        $("#add_new_media").on('click', function() {
+            $("#media_modal").modal('show')
+        })
+
+        $("#save_media").on('click', function() {
+            if ($("#id_media_title").val() == "") {
+                $(".invalid-title").css('display', 'block')
+                return false
+            }
+
+            if ($("#id_media_file").val() == "") {
+                $(".invalid-file").css('display', 'block')
+                return false
+            }
+
+            var ext = $('#id_media_file').val().split('.').pop().toLowerCase()
+            if($.inArray(ext, ['gif','png','jpg','jpeg']) == -1) {
+                $(".invalid-filetype").css('display', 'block')
+                return false
+            }
+
+            $("#media_form").submit()
+
+        })
+    })
+</script>
+{% endblock %}

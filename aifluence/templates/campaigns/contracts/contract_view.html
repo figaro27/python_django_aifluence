@@ -1,0 +1,61 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Contract</title>
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">
+            <span class="font-weight-bold">Contract Details</span>
+            <a href="{% url 'contract_list' %}" class="btn btn-secondary btn-sm text-white float-right">Back</a>
+        </div>
+        <div class="card-body">
+            <label>Title: </label>
+            <span>{{ contract.contract_title }}</span><br/>
+            <label>Campaign Brand: </label>
+            <span>{{ contract.discussion.campaign }}</span><br/>
+            <label>Agent: </label>
+            <span>{{ contract.discussion.campaign.agent }}</span><br/>
+            <label>Influencer: </label>
+            <span>{{ contract.discussion.influencer.user }}</span><br/>
+            <label>Terms: </label>
+            <p>{{ contract.contract_terms }}</p><br/>
+            <label>Budget: </label>
+            <span>{% if contract.discussion.campaign.campaign_currency == 'usd' %}$ {% else %}€ {% endif %}{{ contract.contract_budget }}</span>
+        </div>
+        
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <nav>
+                <div class="nav nav-pills" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link {{post_actived|yesno:'active,'}}" id="nav-post-tab" data-toggle="tab" href="#nav-post" role="tab" aria-controls="nav-activte" aria-selected="true">Post</a>
+                    <a class="nav-item nav-link {{post_actived|yesno:',active'}}" id="nav-media-tab" data-toggle="tab" href="#nav-media" role="tab" aria-controls="nav-past" aria-selected="false">Media</a>
+                </div>
+            </nav>
+        </div>
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane {{post_actived|yesno:'active,'}}" id="nav-post" role="tabpanel" aria-labelledby="nav-post-tab">
+                {% if user.is_staff %}
+                    {% include 'campaigns/contracts/posts/agent_posts.html' %}
+                {% else %}
+                    {% include 'campaigns/contracts/posts/influencer_posts.html' %}
+                {% endif %}
+            </div>
+            <div class="tab-pane {{post_actived|yesno:',active'}}" id="nav-media" role="tabpanel" aria-labelledby="nav-media-tab">
+                {% if user.is_staff %}
+                    {% include 'campaigns/contracts/medias/agent_medias.html' %}
+                {% else %}
+                    {% include 'campaigns/contracts/medias/influencer_medias.html' %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
