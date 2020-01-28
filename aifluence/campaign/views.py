@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 
-from campaign.models import Campaign, Contract, Discussion, Media
+from campaign.models import Campaign, Contract, Discussion, Media, Post
 from influencer.models import Analysis
 from invitation.models import Invitation
 from message.models import Message
@@ -99,7 +99,16 @@ def contract_view(request, *args, **kwargs):
         post_actived = True
         if (request.GET.get('post_actived') == '0'):
             post_actived = False
-        return render(request, 'campaigns/contracts/contract_view.html', {'menu': 'contracts', 'contract': contract, 'media_list': Media.objects.filter(contract=contract).order_by('created_at'), 'post_actived': post_actived})
+        
+        context = {
+            'menu': 'contracts', 
+            'contract': contract, 
+            'media_list': Media.objects.filter(contract=contract).order_by('created_at'), 
+            'post_list': Post.objects.filter(media__contract=contract).order_by('post_date'),  
+            'post_actived': post_actived,
+        }
+
+        return render(request, 'campaigns/contracts/contract_view.html', context)
 
 def contract_offer_agreement(request, *args, **kwargs):
     if request.method == 'POST':
@@ -194,6 +203,11 @@ def media_agreement(request, *args, **kwargs):
             content = "Your post <span class='font-weight-bold'>" + media.title + "</span> has been declined."
         media.save()
 
+        if agreement == 'true':
+            post = Post()
+            post.media = media
+            post.save()
+
         message = Message()
         message.sent_by = media.contract.discussion.campaign.agent
         message.sent_to = media.contract.discussion.influencer.user
@@ -201,4 +215,13 @@ def media_agreement(request, *args, **kwargs):
         message.content = content
         message.save()
 
-        return redirect('/campaigns/contracts/' + str(media.contract.id) + '?post_actived=0')    
+        return redirect('/campaigns/contracts/' + str(media.contract.id) + '?post_actived=0')
+
+def post_update(request, *args, **kwargs):
+    if request.method == 'POST':
+        post = Post.objects.get(pk=request.POST.get('post_id'))
+        post.is_posted = True if request.POST.get('post_status') == 'on' else False
+        post.url = request.POST.get('post_url')
+        post.save()
+
+        return redirect('/campaigns/contracts/' + str(post.media.contract.id) + '?post_actived=1')

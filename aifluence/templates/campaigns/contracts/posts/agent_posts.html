@@ -1,0 +1,94 @@
+{% extends 'layouts/tab_list_template.html' %}
+{% load static %}
+
+{% block actions %}
+{% endblock %}
+
+{% block list %}
+<div id="post_modal" class="modal fade" tabindex="-2" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="post_form" method="post" action="{% url 'post_update' %}" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="id_post_status" name="post_status">
+                        <label for="id_post_status">Posted</label>
+                    </div>
+                    <div>
+                        <input placeholder="Post Link Url" class="form-control mb-2" id="id_post_url" name="post_url"/>
+                    </div>
+                </div>
+                <input type="hidden" id="post_id" name="post_id">
+                <div class="modal-footer">
+                    <button type="submit" class="btn text-white bg-primary" id="save_post">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="post-table" style="height:400px; overflow-y:auto;">
+<table class="table table-borderless table-vcenter mt-3">
+    <thead class="border-bottom">
+        <th class="text-left d-md-table-cell text-nowrap">Title</th>
+        <th class="text-left d-md-table-cell text-nowrap">Media</th>
+        <th class="text-left d-md-table-cell text-nowrap">Url</th>
+        <th class="text-left d-md-table-cell text-nowrap">Status</th>
+        <th class="text-left d-md-table-cell text-nowrap">Post Date</th>
+        <th></th>
+    </thead>
+    <tbody>
+        {% for item in post_list %}
+        <tr class="border-bottom">
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.media.title }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                <a href="{{item.media.media.url}}" download="">
+                    {{ item.media.file_name }}
+                </a>
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle"><a href="{{ item.url}}" target="_blank">{{ item.url|default_if_none:""}}</a></td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                {% if item.is_posted %}
+                <span class="media-status d-block text-white bg-primary">Posted</span>
+                {% endif %}
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.post_date|date:'d M Y' }}</td>
+            <td class="text-right d-none d-md-table-cell text-nowrap ">
+                <a href="#" class="btn btn-primary btn-sm post-edit" style="width:120px;" data-id="{{item.id}}" data-status="{{item.is_posted}}" data-url="{{item.url|default_if_none:''}}"> Edit </a><br/>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td align="center" colspan="6" class="align-content-center">
+                <p>No posts.</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock%}
+
+{% block extrajs %}
+<script>
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        $(".post-edit").on('click', function() {
+            $("#id_post_status").attr('checked', $(this).attr('data-status') === 'True'?true:false)
+            $("#id_post_url").val($(this).attr('data-url'))
+            $("#post_id").val($(this).attr('data-id'))
+            $("#post_modal").modal('show')
+        })
+    })
+</script>
+{% endblock %}

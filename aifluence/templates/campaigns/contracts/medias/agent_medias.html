@@ -35,7 +35,7 @@
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.created_at|date:'d M Y' }}</td>
             <td class="text-right d-none d-md-table-cell text-nowrap ">
                 {% if item.status == 'CR' %}
-                    <a href="{% url 'media_agreement' pk=item.id %}?accepted=true" class="btn btn-secondary btn-sm" style="width:120px;"> Accept</a><br/>
+                    <a href="{% url 'media_agreement' pk=item.id %}?accepted=true" class="btn btn-success btn-sm" style="width:120px;"> Accept</a><br/>
                     <a href="{% url 'media_agreement' pk=item.id %}?accepted=false" class="btn btn-info btn-sm mt-1" style="width:120px;"> Decline </a>
                 {% endif %}
             </td>

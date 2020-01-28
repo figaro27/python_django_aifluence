@@ -89,3 +89,12 @@ class Media(models.Model):
     contract = models.ForeignKey(Contract, on_delete=CASCADE, null=True)
     status = models.CharField(max_length=2, choices=CONSTANTS.POST_STATUS_CHOICES, default='CR')
 
+class Post(models.Model):
+    media = models.ForeignKey(Media, on_delete=CASCADE, null=True)
+    is_posted = models.BooleanField('Status', default=False)
+    url = models.CharField(max_length=255, null=True, blank=True)
+    analysis = JSONField(null=True)
+    post_date = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import ActiveCampaigns, campaign_create, campaign_invite_influencers, ContractListView, InfluencerDiscussions, contract_offer_agreement, contract_view, \
-    media_create, media_agreement
+    media_create, media_agreement, post_update
 
 urlpatterns = [
     path('active', ActiveCampaigns.as_view(), name='active_campaigns'),
@@ -12,4 +12,5 @@ urlpatterns = [
     path('influencer/discussions', InfluencerDiscussions.as_view(), name='influencer_discussions'),
     path('contracts/<int:pk>/media/create', media_create, name='media_create'),
     path('contracts/media/<int:pk>/agreement', media_agreement, name='media_agreement'),
+    path('contracts/post/update', post_update, name='post_update'),
 ]
