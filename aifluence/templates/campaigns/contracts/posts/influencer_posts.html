@@ -1,0 +1,44 @@
+{% extends 'layouts/tab_list_template.html' %}
+{% load static %}
+
+{% block actions %}
+{% endblock %}
+
+{% block list %}
+<div class="post-table" style="height:400px; overflow-y:auto;">
+<table class="table table-borderless table-vcenter mt-3">
+    <thead class="border-bottom">
+        <th class="text-left d-md-table-cell text-nowrap">Title</th>
+        <th class="text-left d-md-table-cell text-nowrap">Media</th>
+        <th class="text-left d-md-table-cell text-nowrap">Url</th>
+        <th class="text-left d-md-table-cell text-nowrap">Status</th>
+        <th class="text-left d-md-table-cell text-nowrap">Post Date</th>
+    </thead>
+    <tbody>
+        {% for item in post_list %}
+        <tr class="border-bottom">
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.media.title }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                <a href="{{item.media.media.url}}" download="">
+                    {{ item.media.file_name }}
+                </a>
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle"><a href="{{ item.url}}" target="_blank">{{ item.url|default_if_none:""}}</a></td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">
+                {% if item.is_posted %}
+                <span class="media-status d-block text-white bg-primary">Posted</span>
+                {% endif %}
+            </td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.post_date|date:'d M Y' }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td align="center" colspan="5" class="align-content-center">
+                <p>No posts.</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</div>
+{% endblock%}
