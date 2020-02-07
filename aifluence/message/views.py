@@ -3,17 +3,23 @@ from django.contrib.auth.decorators import login_required
 from urllib import request
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.db.models import Q
-from django.http import HttpResponseNotFound, HttpResponse, JsonResponse
+from django.http import HttpResponseNotFound, HttpResponse, JsonResponse, HttpResponseRedirect
+from django.contrib import messages
 from datetime import date, datetime
 
 from campaign.models import Discussion, Contract
 from message.models import Message
+from users.models import Influencer
 # Create your views here.
 
-def messages(request, *args, **kwargs):
+def message_list(request, *args, **kwargs):
     if request.method == 'GET':
         if request.user.is_influencer:
+            if Influencer.objects.filter(user=request.user).count() == 0:
+                messages.warning(request, 'You must fill out the profile form to see discussions')
+                return redirect('influencer_profile')
             discussions = Discussion.objects.filter(influencer__user=request.user)
+
         if request.user.is_staff:
             discussions = Discussion.objects.filter(campaign__agent=request.user)
         if request.GET.get('invited') == 'true':

@@ -3,7 +3,6 @@ from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.db.models import Q
 
 from campaign.models import Campaign, Contract, Discussion, Media, Post
@@ -83,7 +82,7 @@ def contract_list(request, *args, **kwargs):
         if request.user.is_influencer:
             if Influencer.objects.filter(user=request.user).count()==0:
                 messages.warning(request, 'You must fill out the profile form to see contracts')
-                return HttpResponseRedirect(reverse('dashboard'))
+                return redirect('influencer_profile')
             queryset = Contract.objects.filter(discussion__influencer__user=request.user)
         else:
             queryset = Contract.objects.filter(discussion__campaign__agent=request.user)

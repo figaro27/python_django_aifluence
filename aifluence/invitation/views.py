@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
-from django.urls import reverse
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.db.models import Q
 from django.views.generic import ListView
@@ -21,7 +20,7 @@ def influencer_invitations(request):
             invitation_list = Invitation.objects.filter(Q(influencer_account=influencer.instagram_account)|Q(influencer_account=influencer.facebook_account)|Q(influencer_account=influencer.twitter_account))
         except Influencer.DoesNotExist:
             messages.warning(request, 'You must fill out the profile form to see invitations')
-            return HttpResponseRedirect(reverse('dashboard'))
+            return redirect('influencer_profile')
 
         context = dict()
         context.update({
