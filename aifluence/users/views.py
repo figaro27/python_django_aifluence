@@ -71,6 +71,10 @@ def influencer_profile(request):
         return render(request, 'registration/influencer_profile.html', {'form': profileForm, 'menu': 'profile'})
     else:
         profileForm = InfluencerProfileForm(request.POST)
+        if request.POST.get('instagram_account') == '' and request.POST.get('facebook_account') == '' and request.POST.get('twitter_account') == '':
+            messages.warning(request, 'You must fill at least  one account.')
+            return HttpResponseRedirect(reverse('influencer_profile'))
+
         if profileForm.is_valid():
             if influencer == None:
                 influencer = profileForm.save(commit=False)

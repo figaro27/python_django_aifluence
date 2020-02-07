@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.db.models import Q
 
 from campaign.models import Campaign, Contract, Discussion, Media, Post
 from influencer.models import Analysis
@@ -74,23 +78,19 @@ def campaign_invite_influencers(request, *args, **kwargs):
         return render(request, 'campaigns/invite_influencers.html', context)
 
 #contracts
-class ContractListView(ListView):
-    model = Contract
-    context_object_name = 'contract_list'
-    template_name = 'campaigns/contracts/contract_index.html'
-    def get_context_data(self, **kwargs):
-        context = super(ContractListView, self).get_context_data(**kwargs)
-        context.update({
-            'menu':'contracts'
-        })
-        return context
-    
-    def get_queryset(self):
-        if self.request.user.is_influencer:
-            queryset = Contract.objects.filter(discussion__influencer__user=self.request.user)
+def contract_list(request, *args, **kwargs):
+    if request.method == 'GET':
+        if request.user.is_influencer:
+            if Influencer.objects.filter(user=request.user).count()==0:
+                messages.warning(request, 'You must fill out the profile form to see contracts')
+                return HttpResponseRedirect(reverse('dashboard'))
+            queryset = Contract.objects.filter(discussion__influencer__user=request.user)
         else:
-            queryset = Contract.objects.filter(discussion__campaign__agent=self.request.user)
-        return queryset
+            queryset = Contract.objects.filter(discussion__campaign__agent=request.user)
+        context = dict()
+        context['menu'] = 'contracts'
+        context['contract_list'] = queryset
+        return render(request, 'campaigns/contracts/contract_index.html', context)
 
 def contract_view(request, *args, **kwargs):
     if request.method == 'GET':
