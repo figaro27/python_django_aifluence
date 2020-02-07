@@ -1,7 +1,7 @@
 {% load static %}
 <ul class="navbar-nav ml-auto">
     <li class="nav-item {% if menu == 'home' %} active {% endif %}">
-        <a class="nav-link" href="#">Home </a>
+        <a class="nav-link" href="{% url 'dashboard' %}">Home </a>
     </li>
     <li class="nav-item {% if menu == 'campaign' %} active {% endif %}">
         <a class="nav-link" href="{% url 'active_campaigns' %}">Campaigns</a>
@@ -9,7 +9,7 @@
     <li class="nav-item {% if menu == 'reports' %} active {% endif %}">
         <a class="nav-link" href="#">Reports</a>
     </li>
-    <li class="nav-item {% if menu == 'profile' %} active {% endif %}">
+    <!-- <li class="nav-item {% if menu == 'profile' %} active {% endif %}">
         <a class="nav-link" href="#">Profile</a>
-    </li>
+    </li> -->
 </ul>

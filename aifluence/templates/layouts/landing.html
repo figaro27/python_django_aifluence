@@ -13,14 +13,18 @@
             </a>
             
             <a class="ml-5" href="{% url 'custom_login' %}">       
-                Sign In
+                Sign In / Sign Up
             </a>
         </div>
     </nav>
 {% endblock %}
 
 {% block content %}
-    <div style="display: flex;flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 90vh;">
-        <h1>Welcome to AIfluence.com</h1>
+    <div class="landing-body" style="display: flex;flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <div class="container">
+            <h1 class="landing-title"> AI-driven influencer marketing platform, that predicts & delivers measurable ROI </h1>
+            <div class="landing-body-content">
+            </div>
+        </div>
     </div>
 {% endblock %}

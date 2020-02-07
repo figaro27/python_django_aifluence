@@ -11,4 +11,15 @@ def dashboard(request):
         else:
             if not influencer_profiles.first().instagram_account and not influencer_profiles.first().facebook_account and not influencer_profiles.first().twitter_account:
                 return redirect('influencer_profile')
-    return render(request, 'layouts/dashboard.html')
+    
+    context = {
+        'menu': 'home'
+    }
+
+    if request.user.is_influencer:
+        return render(request, 'home/home_influencer.html', context)
+    elif request.user.is_client:
+        return render(request, 'home/home_client.html', context)
+    elif request.user.is_staff:
+        return render(request, 'home/home_agent.html', context)
+    
