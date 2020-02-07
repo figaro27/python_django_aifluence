@@ -8,7 +8,18 @@
     justify-content: center;
     min-height: 100%;
     height: 100vh;
-    background-color: #16bbb4;
+}
+
+.landing-page {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-pack: center;
+  justify-content: center;
+  min-height: 100%;
+  height: 100vh;
+  background-color: #16bbb4;
 }
 
 .btn-userrole.active {
