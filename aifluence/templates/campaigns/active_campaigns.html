@@ -18,8 +18,8 @@
         {% for item in object_list %}
             <tr class="border-bottom">
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.brand_name }}</td>
-                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.brand_attributes }}</td>
-                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.campaign_brief }}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.brand_attributes|slice:"0:30" }}..</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.campaign_brief|slice:"0:40" }}..</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% if item.campaign_currency == 'usd' %}${% else %}€{% endif %} {{item.campaign_budget}}</td>
                 <td class="text-right d-none d-md-table-cell text-nowrap ">
                     <a href="{% url 'campaign_invite_influencers' pk=item.id %}" class="btn btn-secondary btn-sm" style="width:120px;"> Send Invitation</a><br/>

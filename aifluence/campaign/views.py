@@ -3,13 +3,13 @@ from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from campaign.models import Campaign, Contract, Discussion, Media, Post
 from influencer.models import Analysis
 from invitation.models import Invitation
 from message.models import Message
-from users.models import Influencer
+from users.models import User, Influencer
 from .forms import CampaignForm
 import aifluence.constants as CONSTANTS
 
@@ -45,6 +45,7 @@ def campaign_create(request):
         if form.is_valid():
             campaign = form.save(commit = False) 
             campaign.client = request.user
+            campaign.agent = User.objects.filter(is_staff=True).exclude(is_superuser=True).annotate(Count('agent', distinct=True)).order_by('agent__count').first()
             campaign.save()
         return redirect('active_campaigns')
 
