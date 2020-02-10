@@ -39,7 +39,6 @@ def register(request):
     if request.method == 'POST':
         regform = UserCreationForm(request.POST)
         if regform.is_valid():
-            print('asdfasdfasdf')
             user = regform.save(commit = False) 
             user.set_password(regform.cleaned_data.get('password2'))
             if (request.POST.get('is_client') == "1"):
@@ -48,7 +47,6 @@ def register(request):
                 user.is_influencer = True
             user.save()
             if request.POST.get('invitation_key'):
-                print(request.POST.get('invitation_key'))
                 return redirect('/login?invitation_key=' + request.POST.get('invitation_key'))
             return redirect('custom_login')
     else:

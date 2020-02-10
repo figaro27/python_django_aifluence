@@ -1,29 +1,8 @@
-<div class="scroll-div" style="height:500px; overflow-x:hidden !important;" class="overflow-auto">
+<div class="scroll-div" style="height:450px; overflow-x:hidden !important;" class="overflow-auto">
     <div>
-        <div class="d-flex justify-content-between">
-            <div class="{% if user.is_influencer %}text-success{% endif %}">
-                <span class="channel-user">
-                    {{description.campaign.agent.first_name|slice:"0:1"|upper}}{{description.campaign.agent.last_name|slice:"0:1"|upper}}
-                </span>  
-                <span class="" style="line-height: 40px;">{{description.campaign.agent.first_name|title }} {{description.campaign.agent.last_name|title }}</span>
-            </div>
-            {% if user.is_staff %}
-            <div>
-                <a class="btn btn-sm text-white bg-primary" id="open_offer_modal" data-id="{{discussion_id}}"><i class="fa fa-plus"></i>Offer Contract</a>
-            </div>
-            {% endif %}
-        </div>
-        <div class="row">
-            <div class="col-md-10">
-                <span class="ml-5">Brand Name: {{ description.campaign.brand_name }}</span>
-                <span class="ml-3">Brand Category: {% for category in description.campaign.brand_category %} {{category.0}} {% endfor %}</span><br/>
-                <span class="ml-5">Brand Attributes: {{ desciprition.campaign.brand_attributes }}</span><br/>
-                <span class="ml-5">Key Selling Point: {{ description.campaign.key_selling_point }}</span><br/>
-                <span class="ml-5">Brief: {{ description.campaign.campaign_brief}}</span><br/>
-                <span class="ml-5">Location: {% for ll in location %} {ll.0} {% empty %} All over the world {% endfor %}</span><br/>
-                <p class="ml-5 mt-2"> We highly recommend you to use the posting style of {{ description.posting_suggestion }}  for this campaign after carefully matching your expeirences & campaign details.</p>
-            </div>
-        </div>
+        {% if user.is_staff %}
+            <a class="btn btn-sm text-white bg-primary float-right" id="open_offer_modal" data-id="{{discussion_id}}"><i class="fa fa-plus"></i>Offer Contract</a><br/>
+        {% endif %}
         <div class="message-body mt-2">
             {% include 'messages/message_body.html' %}
         </div>
@@ -31,7 +10,7 @@
 </div>
 <div class="row mt-4 ">
     <div class="col-md-11">
-        <textarea name="message" cols="500" rows="1" maxlength="4000" placeholder="Your Messages here" class="textarea form-control mb-2" id="id_message"></textarea>
+        <textarea name="message" cols="500" rows="3" maxlength="4000" placeholder="Your Messages here" class="textarea form-control mb-2" id="id_message"></textarea>
     </div>
     <div class="col-md-1 p-0">
         <a class="btn text-white bg-success disabled" id="send_btn" data-id="{{discussion_id}}">Send</a>

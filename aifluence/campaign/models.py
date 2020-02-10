@@ -89,8 +89,8 @@ class Contract(models.Model):
         return self.discussion.campaign + " - " + self.discussion.campaign.client + " - " + self.discussion.influencer
 
 class Media(models.Model):
-    title = models.CharField(max_length=60, blank=True, null=True)
-    file_name = models.CharField(max_length=30, blank=True, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    file_name = models.CharField(max_length=60, blank=True, null=True)
     upload_by = models.ForeignKey(Influencer, on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     media = models.FileField(upload_to='%Y/%m/%d')

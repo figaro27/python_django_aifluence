@@ -166,6 +166,13 @@ def create_discussion(invitation, influencer):
     discussion.influencer_platform = invitation.influencer_platform
     discussion.posting_suggestion = 'Video style'
     discussion.save()
+
+    message = Message()
+    message.discussion = discussion
+    message.sent_by = invitation.campaign.agent
+    message.sent_to = influencer.user
+    message.content = discussion.posting_suggestion
+    message.save()
     return discussion.id
 
 def media_create(request, *args, **kwargs):
