@@ -123,6 +123,7 @@
                 success: function(data){
                     $("#agreement_modal").modal('hide');
                     $(".message-body").html(data);
+                    $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
                 }
             })
 
@@ -138,6 +139,7 @@
             $("#accept_contract_btn").attr("data-message", message_id);
             $("#decline_contract_btn").attr("data-message", message_id);
             $(".invalid-contract-agreement").css('display', 'none');
+            $("#id_contract_comment").val("");
             $("#agreement_modal").modal('show');
         {% endif %}
     }

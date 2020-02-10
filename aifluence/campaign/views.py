@@ -222,7 +222,7 @@ def media_agreement(request, *args, **kwargs):
         message.content = content
         message.save()
 
-        return redirect('/campaigns/contracts/' + str(media.contract.id) + '?post_actived=0')
+        return redirect('/campaigns/contracts/' + str(media.contract.id) + '?post_actived=1')
 
 def post_update(request, *args, **kwargs):
     if request.method == 'POST':

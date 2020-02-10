@@ -89,7 +89,13 @@
         });
 
         $("#open_offer_modal").on('click', function(){
-            hidden_invalid();
+            $(".invalid-terms").css('display', 'none');
+            $(".invalid-budget").css('display', 'none');
+            $(".invalid-budget-number").css('display', 'none');
+            $(".invalid-title").css('display', 'none');
+            $("#id_contract_title").val("")
+            $("#id_contract_terms").val("")
+            $("#id_contract_budget").val("")
             $("#offer_modal").modal('show');
         })
 
@@ -143,12 +149,5 @@
                 }
             })
         })
-
-        function hidden_invalid(){
-            $(".invalid-terms").css('display', 'none');
-            $(".invalid-budget").css('display', 'none');
-            $(".invalid-budget-number").css('display', 'none');
-            $(".invalid-title").css('display', 'none');
-        }
     });
 </script>
