@@ -3,6 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from users.models import Influencer
+from campaign.models import Contract
+from invitation.models import Invitation
+from message.models import Message
 # Create your views here.
 @login_required
 def dashboard(request):
@@ -20,9 +23,18 @@ def dashboard(request):
     }
 
     if request.user.is_influencer:
+        context.update(get_num_notification(request))
         return render(request, 'home/home_influencer.html', context)
     elif request.user.is_client:
         return render(request, 'home/home_client.html', context)
     elif request.user.is_staff:
+        context.update(get_num_notification(request))
         return render(request, 'home/home_agent.html', context)
+
+def get_num_notification(request):
+    context = dict()
+    context = {
+        'numOfDiscussions': Message.objects.filter(sent_to=request.user,read_status=False).count()
+    }
+    return context
     

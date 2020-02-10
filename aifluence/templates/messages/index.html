@@ -34,22 +34,26 @@
                         <div class="col-2 border-1 border-right overflow-auto p-0" style="height:550px; overflow-x:hidden;">
                             {% for discussion in discussions %}
                                 <div class="d-flex discussion " style="height: 80px; cursor:pointer;" data-id="{{discussion.id}}">
-                                    <div style="width:40px;" class="align-self-center">
+                                    <div style="width:40px;" class="align-self-center position-relative">
                                         <i class="fa fa-user" style="font-size:40px;"></i> 
                                     </div>
-                                    <div class="ml-2 flex-column">
+                                    <div class="ml-2 flex-column ">
                                         <div>
                                             <small class="font-weight-bolder">
                                                 {% if user.is_influencer %}
-                                                    {{ discussion.campaign.agent.first_name|title }} {{ discussion.campaign.agent.last_name|title }}
+                                                {{ discussion.campaign.agent.first_name|title }} {{ discussion.campaign.agent.last_name|title }}
                                                 {% else %}
-                                                    {{ discussion.influencer.user.first_name|title }} {{ discussion.influencer.user.last_name|title }}
+                                                {{ discussion.influencer.user.first_name|title }} {{ discussion.influencer.user.last_name|title }}
                                                 {% endif %}
                                             </small>
                                         </div>
                                         <div style="width:100%;">
                                             <small>
-                                                {{ discussion.campaign.brand_name }}
+                                                {{ discussion.campaign.brand_name|slice:"0:13" }}..
+                                            </small>
+                                            {% if discussion.message_count > 0 %}<span class="custom-notification current-discussion-notify text-white" data-id="{{discussion.id}}">{{discussion.message_count}}</span>{% endif %}<br/>
+                                            <small>
+                                                {{ discussion.campaign.campaign_brief|slice:"0:13" }}..
                                             </small>
                                         </div>
                                     </div>
@@ -126,7 +130,6 @@
                     $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
                 }
             })
-
         });
     });
 

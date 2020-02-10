@@ -11,6 +11,7 @@ from invitation.models import Invitation
 from message.models import Message
 from users.models import User, Influencer
 from .forms import CampaignForm
+from dashboard.views import get_num_notification
 import aifluence.constants as CONSTANTS
 
 # Create your views here.
@@ -90,6 +91,7 @@ def contract_list(request, *args, **kwargs):
         context = dict()
         context['menu'] = 'contracts'
         context['contract_list'] = queryset
+        context.update(get_num_notification(request))
         return render(request, 'campaigns/contracts/contract_index.html', context)
 
 def contract_view(request, *args, **kwargs):
@@ -140,22 +142,6 @@ def contract_offer_agreement(request, *args, **kwargs):
         offer_message.save()
 
         return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion=contract.discussion).order_by('sent_at'),})
-
-class InfluencerDiscussions(ListView):
-    model = Discussion
-    template_name = 'campaigns/influencer_discussions.html'
-    context_object_name = 'discussion_list'
-
-    def get_context_data(self, **kwargs):
-        context = super(InfluencerDiscussions, self).get_context_data(**kwargs)
-        context.update({
-            'menu':'discussions'
-        })
-        return context
-
-    def get_queryset(self):
-        queryset = Discussion.objects.filter(influencer__user=self.request.user)
-        return queryset
 
 def create_discussion(invitation, influencer):
 

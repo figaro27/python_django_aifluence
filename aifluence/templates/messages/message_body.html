@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="row mt-1">
-            <div class="col-md-10 ">
+            <div class="col-md-10 {% if channel_message.sent_by  != request.user %}received-message{% endif %}" data-id="{{channel_message.id}}" data-read="{{channel_message.read_status}}" data-discussion="{{channel_message.discussion.id}}">
                 {% if forloop.counter == 1 %}
                     <span class="ml-5">Brand Name: {{ channel_message.discussion.campaign.brand_name }}</span><br>
                     <span class="ml-5">Brand Category: {% for category in channel_message.discussion.campaign.brand_category %} {{category.0}} {% endfor %}</span><br/>
@@ -30,3 +30,44 @@
     </div>
 </div>
 {% endfor %}
+<script>
+    $(document).ready(function(){
+
+        $.ajaxSetup({
+            headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        $(".received-message").on('click', function() {
+            
+            if ($(this).attr('data-read') == 'False') {
+                $(this).attr('data-read', 'True')
+                
+                var num = $("#discussion_notify").html()
+                if (num=="1") {
+                    var element = document.getElementById("discussion_notify");
+                    element.parentNode.removeChild(element);    
+                }else{
+                    $("#discussion_notify").html(parseInt(num)-1)
+                }
+                
+                var current_discussion_notify = $(".current-discussion-notify[data-id='"+$(this).attr('data-discussion')+"']")
+                console.log(current_discussion_notify)
+                var current_discussion_num = current_discussion_notify.html()
+                console.log(current_discussion_num)
+                if (current_discussion_num=="1") {
+                    current_discussion_notify.remove() 
+                } else{
+                    current_discussion_notify.html(parseInt(current_discussion_num) - 1)
+                }
+                
+                $.ajax({
+                    url: "/messages/" + $(this).attr('data-id') + "/read",
+                    method: 'post',
+                    success: function(data){
+                    }
+                })
+            }
+        })
+    });
+</script>

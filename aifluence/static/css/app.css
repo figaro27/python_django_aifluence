@@ -101,3 +101,14 @@ span.media-status {
   font-weight: bold;
   color: azure;
 }
+
+.custom-notification {
+  background-color: #14881c;
+  display: inline-block;
+  padding: 3px;
+  font-size: smaller;
+  font-weight: bolder;
+  line-height: 0.7;
+  border-radius: 100%;
+  text-align: center;
+}

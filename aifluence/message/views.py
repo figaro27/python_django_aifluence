@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from urllib import request
 from django.core.mail import EmailMultiAlternatives, send_mail
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.http import HttpResponseNotFound, HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib import messages
 from datetime import date, datetime
@@ -10,22 +10,43 @@ from datetime import date, datetime
 from campaign.models import Discussion, Contract
 from message.models import Message
 from users.models import Influencer
+
+from dashboard.views import get_num_notification
 # Create your views here.
 
 def message_list(request, *args, **kwargs):
     if request.method == 'GET':
+        context = dict()
         if request.user.is_influencer:
             if Influencer.objects.filter(user=request.user).count() == 0:
                 messages.warning(request, 'You must fill out the profile form to see discussions')
                 return redirect('influencer_profile')
-            discussions = Discussion.objects.filter(influencer__user=request.user)
-
+            discussions = Discussion.objects.filter(influencer__user=request.user).annotate(
+                message_count=Count(
+                    'message', 
+                    filter=Q(message__read_status=False, message__sent_to=request.user),
+                    distinct=True
+                    )
+                )
         if request.user.is_staff:
-            discussions = Discussion.objects.filter(campaign__agent=request.user)
+            discussions = Discussion.objects.filter(campaign__agent=request.user).annotate(
+                message_count=Count(
+                    'message', 
+                    filter=Q(message__read_status=False, message__sent_to=request.user),
+                    distinct=True
+                    )
+                )
+        context = { 
+            'discussions': discussions,
+            'menu': 'messages'
+        }
+
+        context.update(get_num_notification(request))
         if request.GET.get('invited') == 'true':
             discussion_id = request.GET.get('id')
-            return render(request, 'messages/index.html', {'menu': 'messages', 'discussions': discussions, 'discussion_id': discussion_id,})
-        return render(request, 'messages/index.html', {'menu': 'messages', 'discussions': discussions,})
+            context.update({'discussion_id': discussion_id})
+            return render(request, 'messages/index.html', context)
+        return render(request, 'messages/index.html', context)
 
 def create_message(request, *args, **kwargs):
     if request.method == 'POST':
@@ -33,7 +54,6 @@ def create_message(request, *args, **kwargs):
         discussion = Discussion.objects.get(pk=discussion_id)
         content = request.POST.get('content')
         type = request.POST.get('type')
-        
 
         if type == 'CO':
             budget = request.POST.get('budget')
@@ -65,3 +85,8 @@ def all_channel_messages(request, *args, **kwargs):
     discussion = Discussion.objects.get(pk=kwargs.get('pk'))
         
     return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk'), 'description': discussion})
+
+def read_message(request, *args, **kwargs):
+    if request.method == 'POST':
+        Message.objects.filter(pk=kwargs.get('pk')).update(read_status=True)
+        return JsonResponse({})
