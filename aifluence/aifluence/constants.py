@@ -18,6 +18,13 @@ PERSONAL_INCOME_CHOICES = ['Under $10,000' , '$10,000 - $19,999', '$20,000 - $29
 
 SOCIAL_STATUS_CHOICES = ['Lower', 'Working', 'Middle', 'Upper']
 
+SOCIAL_STATUS_EARNINGS = (
+    ('Lower', ['under_10000', '10000_19999']),
+    ('Working', ['20000_29999', '30000_39999', '40000_49999']),
+    ('Middle', ['50000_74999', '75000_99999']),
+    ('Upper', ['over_100000']),
+)
+
 INTERESTS_CHOICES = [
     "3D Graphics",
     "3D Printing",
@@ -712,7 +719,7 @@ COUNTRY_CHOICES = (
     ("TV", "Tuvalu"),
     ("UG", "Uganda"),
     ("UA", "Ukraine"),
-    ("AE", "United Arab Emirates"),
+    ("AE", "UAE"),
     ("GB", "United Kingdom"),
     ("TZ", "United Republic of Tanzania"),
     ("US", "United States"),
@@ -725,6 +732,7 @@ COUNTRY_CHOICES = (
     ("WF", "Wallis and Futuna Islands"),
     ("EH", "Western Sahara"),
     ("ZM", "Zambia"),
+    ("NG", "Nigeria"),
 )
 
 CURRENCY_CHOICES = (

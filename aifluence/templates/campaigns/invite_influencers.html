@@ -14,8 +14,9 @@
         <th class="text-left d-md-table-cell text-nowrap">Influencer Account</th>
         <th class="text-left d-md-table-cell text-nowrap">Influencer Platform</th>
         <th class="text-left d-md-table-cell text-nowrap">Followers</th>
+        <th class="text-left d-md-table-cell text-nowrap">Potential Audience</th>
         <th class="text-left d-md-table-cell text-nowrap">Invitation Status</th>
-        <th></th>
+        <th class="text-center d-md-table-cell text-nowrap">Action</th>
     </thead>
     <tbody>
         {% for item in object_list %}
@@ -23,6 +24,7 @@
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.influencer_account|safe }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.get_influencer_platform_display|safe }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">{{ item.followers }}</td>
+            <td class="text-left d-md-table-cell text-nowrap align-middle font-weight-bold">{{ item.filtered_followers }}</td>
             <td class="text-left d-md-table-cell text-nowrap align-middle">
                 {% if item.invite_status %}
                     {% if item.invite_status == 'SENT' %}
@@ -80,8 +82,8 @@
             var action = $(this).attr('data-action')
             var campaign_id = $(this).attr('data-campaign')
             var influencer_id = $(this).attr('data-id')
-            var status_td = $(selected_row).find('td').eq('3')
-            var action_td = $(selected_row).find('td').eq('4')
+            var status_td = $(selected_row).find('td').eq('4')
+            var action_td = $(selected_row).find('td').eq('5')
             
             $(action_td).find('a').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>')
             

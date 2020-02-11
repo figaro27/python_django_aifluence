@@ -3,7 +3,8 @@ from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F, IntegerField
+from django.db.models.functions import Cast
 
 from campaign.models import Campaign, Contract, Discussion, Media, Post
 from influencer.models import Analysis
@@ -13,6 +14,7 @@ from users.models import User, Influencer
 from .forms import CampaignForm
 from dashboard.views import get_num_notification
 import aifluence.constants as CONSTANTS
+from operator import attrgetter
 
 # Create your views here.
 class ActiveCampaigns(ListView):
@@ -53,15 +55,12 @@ def campaign_create(request):
 def campaign_invite_influencers(request, *args, **kwargs):
     if request.method == 'GET':
         campaign_id = kwargs.get('pk')
-        
+        campaign = Campaign.objects.get(pk=campaign_id)
+        countries = dict(CONSTANTS.COUNTRY_CHOICES)
+        socialStatusEarningOptions = dict(CONSTANTS.SOCIAL_STATUS_EARNINGS)
+
         # Apply filter with campaign information
         influencer_list = Analysis.objects.all()
-
-        # Total followers
-        influencer_list = influencer_list.annotate(
-            number1=RawSQL("basics->'gender'->'Male'->'number'", []),
-            number2=RawSQL("basics->'gender'->'Female'->'number'", [])
-        ).order_by('-number1', '-number2')
 
         #Add invitation status and total followers
         for influencer in influencer_list:
@@ -71,6 +70,49 @@ def campaign_invite_influencers(request, *args, **kwargs):
             else:
                 influencer.invite_status = invitations.first().get_status_display
             influencer.followers = influencer.basics['gender']['Male']['number'] + influencer.basics['gender']['Female']['number'] 
+
+            # filter by age range
+            influencer.filtered_followers = influencer.followers
+            if (len(campaign.age_range) > 0):
+                age_filtered_followers = 0
+                for age in campaign.age_range:
+                    portion = influencer.basics['age'][age[0]]['percent'] / 100 if (age[0] in influencer.basics['age']) > 0 else 0
+                    if portion > 0:
+                        age_filtered_followers += influencer.filtered_followers * portion
+                influencer.filtered_followers = age_filtered_followers
+
+            # filter by interests
+            if (len(campaign.interests) > 0):
+                interests_filtered_followers = 0
+                for interest in campaign.interests:
+                    portion = influencer.interests[interest[0]]['percent'] / 100 if (interest[0] in influencer.interests) > 0 else 0
+                    if portion > 0:
+                        interests_filtered_followers += influencer.filtered_followers * portion
+                influencer.filtered_followers = interests_filtered_followers
+
+            # filter by locations
+            if (len(campaign.location) > 0):
+                locations_filtered_followers = 0
+                for location in campaign.location:
+                    locationName = countries[location[0]] if (location[0] in countries) else ""
+                    portion = influencer.locations[locationName]['percent'] / 100 if (locationName in influencer.locations) > 0 else 0
+                    if portion > 0:
+                        locations_filtered_followers += influencer.filtered_followers * portion
+                influencer.filtered_followers = locations_filtered_followers
+
+            # filter by social status
+            if (len(campaign.social_status) > 0):
+                social_status_filtered_followers = 0
+                for social_status in campaign.social_status:
+                    socialStatusEarnings = socialStatusEarningOptions[social_status[0]] if (social_status[0] in socialStatusEarningOptions) else []
+                    portion = 0
+                    for socialStatusEarning in socialStatusEarnings:
+                        portion += influencer.earnings[socialStatusEarning]['percent'] / 100 if (socialStatusEarning in influencer.earnings) > 0 else 0
+                    if portion > 0:
+                        social_status_filtered_followers += influencer.filtered_followers * portion
+                influencer.filtered_followers = int(social_status_filtered_followers)
+
+        influencer_list = sorted(influencer_list, key=attrgetter('filtered_followers'), reverse=True)
         
         context = dict()
         context['menu'] = 'campaign'
