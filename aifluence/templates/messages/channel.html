@@ -76,7 +76,7 @@
                 method: "post",
                 data: {
                     'discussion_id': $(this).attr('data-id'),
-                    'content': $("#id_message").val(),
+                    'content': $("#id_message").val().replace(/\n\r?/g, '<br />'),
                     'type': message_type,
                 },
                 success: function(data) {

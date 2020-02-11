@@ -96,6 +96,15 @@
             $(".discussion-active").removeClass('discussion-active');
             $(this).addClass('discussion-active');
 
+            var num = $("#discussion_notify").html()
+                if (parseInt(num)-parseInt($(".current-discussion-notify[data-id='"+$(this).attr('data-id')+"']").html()) < 1) {
+                    var element = document.getElementById("discussion_notify");
+                    element.parentNode.removeChild(element);    
+                }else{
+                    $("#discussion_notify").html(parseInt(num)-parseInt($(".current-discussion-notify[data-id='"+$(this).attr('data-id')+"']").html()))
+                }
+            $(".current-discussion-notify[data-id='"+$(this).attr('data-id')+"']").remove()
+
             $.ajax({
                 url: "/messages/channels/" + $(this).attr('data-id'),
                 success: function(data){
@@ -145,6 +154,11 @@
             $("#id_contract_comment").val("");
             $("#agreement_modal").modal('show');
         {% endif %}
+    }
+
+    function see_media_upload(e) {
+        var contract_id = $(e).data("id");
+        window.location.href = '/campaigns/contracts/' + contract_id + "?post_actived=0"
     }
 </script>
 {% endblock %}

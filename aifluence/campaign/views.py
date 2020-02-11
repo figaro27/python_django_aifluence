@@ -109,7 +109,7 @@ def contract_view(request, *args, **kwargs):
             'post_list': Post.objects.filter(media__contract=contract).order_by('post_date'),  
             'post_actived': post_actived,
         }
-
+        context.update(get_num_notification(request))
         return render(request, 'campaigns/contracts/contract_view.html', context)
 
 def contract_offer_agreement(request, *args, **kwargs):
@@ -177,7 +177,7 @@ def media_create(request, *args, **kwargs):
         message.sent_by = contract.discussion.influencer.user
         message.sent_to = contract.discussion.campaign.agent
         message.discussion = contract.discussion
-        message.content = "I have uploaded post media. Please take a look and let me know your thought."
+        message.content = "I have uploaded post media. Please take a look at <a href='#' onclick='see_media_upload(this)' data-id='" + str(contract.id) + "'>here</a> and let me know your thought."
         message.save()
 
         return redirect('/campaigns/contracts/' + str(contract_id) + '?post_actived=0')

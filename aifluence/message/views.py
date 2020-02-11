@@ -82,6 +82,7 @@ def create_message(request, *args, **kwargs):
 
 def all_channel_messages(request, *args, **kwargs):
     channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk')).order_by('sent_at')
+    Message.objects.filter(discussion__id=kwargs.get('pk'),sent_to=request.user).update(read_status=True)
     discussion = Discussion.objects.get(pk=kwargs.get('pk'))
         
     return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk'), 'description': discussion})
