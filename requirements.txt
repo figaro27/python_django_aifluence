@@ -5,3 +5,4 @@ django-widget-tweaks
 django-crispy-forms
 djangorestframework
 InstagramApi
+instaloader
