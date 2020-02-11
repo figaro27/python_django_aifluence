@@ -32,6 +32,18 @@ class ActiveCampaigns(ListView):
     def get_queryset(self):
         queryset = Campaign.objects.filter(client=self.request.user)
         return queryset
+def campaign_view(request, *args, **kwargs):
+    if request.method == 'GET':
+        campaign_id = kwargs.get('pk')
+        post_list = Post.objects.filter(campaign__id=campaign_id, is_posted=True)
+        context = dict()
+        context = {
+            'post_list': post_list,
+            'campaign': Campaign.objects.get(pk=campaign_id),
+            'menu': 'campaign',
+        }
+        context.update(get_num_notification(request))
+        return render(request, 'campaigns/details.html', context)
 
 def campaign_create(request):
     if request.method == 'GET':
@@ -43,6 +55,7 @@ def campaign_create(request):
         context['social_statuses'] = CONSTANTS.SOCIAL_STATUS_CHOICES
         context['interests'] = CONSTANTS.INTERESTS_CHOICES        
         context['countries'] = CONSTANTS.COUNTRY_CHOICES
+        context['menu'] = 'campaign'
         context.update(get_num_notification(request))
         return render(request, 'campaigns/create.html', context)
     else:
@@ -244,6 +257,8 @@ def media_agreement(request, *args, **kwargs):
         if agreement == 'true':
             post = Post()
             post.media = media
+            post.campaign = media.contract.discussion.campaign
+            post.influencer = media.contract.discussion.influencer
             post.save()
 
         message = Message()

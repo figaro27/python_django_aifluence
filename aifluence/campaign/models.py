@@ -103,6 +103,8 @@ class Post(models.Model):
     url = models.CharField(max_length=255, null=True, blank=True)
     analysis = JSONField(null=True)
     post_date = models.DateTimeField(null=True)
+    campaign = models.ForeignKey(Campaign, on_delete=CASCADE, null=True)
+    influencer = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

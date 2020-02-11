@@ -48,7 +48,7 @@ class InviteInfluencerView(APIView):
                     invitation.campaign = campaign
                     invitation.influencer_account = influencer.influencer_account
                     invitation.influencer_platform = influencer.influencer_platform
-                    invitation.invitation_content = 'AAAAAAAAAAAAAA'
+                    invitation.invitation_content = "We invite you to the marketing campaign you'd be interested in."
                     invitation.status = 'CR'
                     invitation.analysis = influencer
                     invitation.save()

@@ -1,0 +1,66 @@
+{% extends 'layouts/dashboard.html' %}
+{% load static %}
+{% block title %}
+    <title>AIfluence.com | Campaign</title>
+{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container">
+    <div class="card mt-5">
+        <div class="card-header">
+            <span class="font-weight-bold">Campaign Details</span>
+            <a href="{% url 'active_campaigns' %}" class="btn btn-secondary btn-sm text-white float-right ml-2">Back</a>
+            <a href="#" class="btn btn-primary btn-sm text-white float-right">Update Status</a>
+        </div>
+        <div class="card-body">
+            <label>Brand Name: </label> {{ campaign.brand_name }}<br>
+            <label>Brand Category: </label> {% for category in campaign.brand_category %} {{category.0}} {% endfor %}<br/>
+            <label>Brand Attributes: </label> {{ campaign.brand_attributes }}<br/>
+            <label>Key Selling Point: </label> {{ campaign.key_selling_point }}<br/>
+            <label>Brief: </label> {{ campaign.campaign_brief}}<br/>
+            <label>Location: </label> {% for ll in campaign.location %} {ll.0} {% empty %} All over the world {% endfor %}<br/>
+            <label>Budget: </label>
+            {% if campaign.campaign_currency == 'usd' %}$ {% else %}€ {% endif %}{{ campaign.campaign_budget }}<br/>
+        </div>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <span class="font-weight-bold">Contract Status</span>
+        </div>
+        <div class="card-body">
+            <table class="table card-table table-borderless table-vcenter mt-3">
+                <tr class="border-bottom">
+                    <th class="text-left d-none d-md-table-cell text-nowrap">Post URL</th>
+                    <th class="text-left d-none d-md-table-cell text-nowrap">Influencer</th>
+                    <th class="text-left d-none d-md-table-cell text-nowrap">Posted At</th>
+                    <th class="text-left d-none d-md-table-cell text-nowrap">Likes</th>
+                    <th class="text-left d-none d-md-table-cell text-nowrap">Comments</th>
+                    <th></th>
+                </tr>
+                <tbody>
+                    {% for item in post_list %}
+                        <tr class="border-bottom">
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle"><a href="{{ item.url }}" target="_blank">{{ item.url }}</a></td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.influencer.instagram_account}}</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.post_date|date:"d M Y"}}</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">123</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">543</td>
+                            <td class="text-right d-none d-md-table-cell text-nowrap ">
+                                <a href="{{ item.media.media.url }}" class="btn btn-info btn-sm" download><i class="fa fa-download"></i></a><br/>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>    
+                            <td align="center" colspan="5" class="align-content-center">No posts.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
