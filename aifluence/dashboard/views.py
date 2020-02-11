@@ -26,6 +26,7 @@ def dashboard(request):
         context.update(get_num_notification(request))
         return render(request, 'home/home_influencer.html', context)
     elif request.user.is_client:
+        context.update(get_num_notification(request))
         return render(request, 'home/home_client.html', context)
     elif request.user.is_staff:
         context.update(get_num_notification(request))

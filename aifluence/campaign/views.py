@@ -27,6 +27,7 @@ class ActiveCampaigns(ListView):
         context.update({
             'menu':'campaign'
         })
+        context.update(get_num_notification(self.request))
         return context
     def get_queryset(self):
         queryset = Campaign.objects.filter(client=self.request.user)
@@ -42,6 +43,7 @@ def campaign_create(request):
         context['social_statuses'] = CONSTANTS.SOCIAL_STATUS_CHOICES
         context['interests'] = CONSTANTS.INTERESTS_CHOICES        
         context['countries'] = CONSTANTS.COUNTRY_CHOICES
+        context.update(get_num_notification(request))
         return render(request, 'campaigns/create.html', context)
     else:
         form = CampaignForm(request.POST)
@@ -118,6 +120,7 @@ def campaign_invite_influencers(request, *args, **kwargs):
         context['menu'] = 'campaign'
         context['object_list'] = influencer_list
         context['campaign_id'] = campaign_id
+        context.update(get_num_notification(request))
         return render(request, 'campaigns/invite_influencers.html', context)
 
 #contracts
