@@ -1,0 +1,83 @@
+{% extends 'layouts/dashboard.html' %}
+{% block content %}
+    {% csrf_token %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-5">
+                <div class="card" style="height:650px;">
+                    <div class="card-header">
+                        <h3>Discussions About Campaign</h3>
+                    </div>
+                    <div class="card-body d-flex py-2 px-2" style="height: 550px;">
+                        <div class="col-2 border-1 border-right overflow-auto p-0" style="height:550px; overflow-x:hidden;">
+                            {% for campaign in campaigns %}
+                                <div class="d-flex discussion " style="height: 80px; cursor:pointer;" data-id="{{campaign.id}}">
+                                    <div style="width:40px;" class="align-self-center position-relative">
+                                        <i class="fa fa-user" style="font-size:40px;"></i> 
+                                    </div>
+                                    <div class="ml-2 flex-column ">
+                                        <div>
+                                            <small class="font-weight-bolder">
+                                                {% if user.is_client %}
+                                                {{ campaign.agent.first_name|title }} {{ campaign.agent.last_name|title }}
+                                                {% else %}
+                                                {{ campaign.client.first_name|title }} {{ campaign.client.last_name|title }}
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                        <div style="width:100%;">
+                                            <small>
+                                                {{ campaign.brand_name|slice:"0:13" }}..
+                                            </small>
+                                            {% if campaign.message_count > 0 %}<span class="custom-notification current-campaign-notify text-white" data-id="{{campaign.id}}">{{campaign.message_count}}</span>{% endif %}<br/>
+                                            <small>
+                                                {{ campaign.campaign_brief|slice:"0:13" }}..
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-10 message-channel" hidden style="height:550px;">
+                            {% include 'messages/client_channel.html' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+    $(document).ready(function(){
+
+        $.ajaxSetup({
+            headers:
+                { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+        });
+
+        $(".discussion").on('click', function(){
+            $(".discussion-active").removeClass('discussion-active');
+            $(this).addClass('discussion-active');
+
+            var num = $("#campaign_notify").html()
+                if (parseInt(num)-parseInt($(".current-campaign-notify[data-id='"+$(this).attr('data-id')+"']").html()) < 1) {
+                    var element = document.getElementById("campaign_notify");
+                    element.parentNode.removeChild(element);    
+                }else{
+                    $("#campaign_notify").html(parseInt(num)-parseInt($(".current-campaign-notify[data-id='"+$(this).attr('data-id')+"']").html()))
+                }
+            $(".current-campaign-notify[data-id='"+$(this).attr('data-id')+"']").remove()
+
+            $.ajax({
+                url: "/messages/campaigns/" + $(this).attr('data-id'),
+                success: function(data){
+                    $(".message-channel").removeAttr('hidden');
+                    $(".message-channel").html(data);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

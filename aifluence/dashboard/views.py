@@ -33,8 +33,11 @@ def dashboard(request):
 
 def get_num_notification(request):
     context = dict()
-    context = {
-        'numOfDiscussions': Message.objects.filter(sent_to=request.user,read_status=False).count()
-    }
+    if not request.user.is_client:
+        context = {
+            'numOfInfluencerMessage': Message.objects.filter(sent_to=request.user,read_status=False,campaign__isnull=True).count()
+        }
+    if not request.user.is_influencer:
+        context.update({'numOfClientMessage': Message.objects.filter(sent_to=request.user,read_status=False,discussion__isnull=True).count()})
     return context
     

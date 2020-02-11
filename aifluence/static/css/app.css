@@ -127,3 +127,7 @@ span.media-status {
 .sent-message {
   background-color: rgba(0,123,255,.25);
 }
+
+.message-campaign-brief {
+  color: teal;
+}

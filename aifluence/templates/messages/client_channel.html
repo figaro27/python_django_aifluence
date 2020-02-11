@@ -1,0 +1,53 @@
+<div class="scroll-div" style="height:450px; overflow-x:hidden !important;" class="overflow-auto">
+    <div class="message-body mt-2">
+        {% include 'messages/client_message_body.html' %}
+    </div>
+</div>
+<div class="row mt-4 ">
+    <div class="col-md-11">
+        <textarea name="message" cols="500" rows="3" maxlength="4000" placeholder="Your Messages here" class="textarea form-control mb-2" id="id_message"></textarea>
+    </div>
+    <div class="col-md-1 p-0">
+        <a class="btn text-white bg-success disabled" id="send_btn" data-id="{{campaign_id}}">Send</a>
+    </div>
+</div>
+ 
+<script>
+    $(document).ready(function() {
+        $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+        
+        $('#id_message').on('keyup', function(){
+            if ($(this).val() === ""){
+                $('#send_btn').addClass('disabled');        
+            }else {
+                $('#send_btn').removeClass('disabled');
+            }
+        })
+
+        $('#send_btn').on('click', function(){
+            if($(this).hasClass('disabled'))
+                return false;
+            var message_type = 'AC';
+
+            {% if user.is_client %}
+                message_type = 'CA';
+            {% endif %}
+
+            $.ajax({
+                url: "/messages/campaigns/create",
+                method: "post",
+                data: {
+                    'campaign_id': $(this).attr('data-id'),
+                    'content': $("#id_message").val().replace(/\n\r?/g, '<br />'),
+                    'type': message_type,
+                },
+                success: function(data) {
+                    $("#id_message").val("");
+                    $('#send_btn').addClass('disabled');
+                    $(".message-body").html(data);
+                    $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+                }
+            })
+        });
+    });
+</script>

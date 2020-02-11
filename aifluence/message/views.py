@@ -7,7 +7,7 @@ from django.http import HttpResponseNotFound, HttpResponse, JsonResponse, HttpRe
 from django.contrib import messages
 from datetime import date, datetime
 
-from campaign.models import Discussion, Contract
+from campaign.models import Campaign, Discussion, Contract
 from message.models import Message
 from users.models import Influencer
 
@@ -28,6 +28,10 @@ def message_list(request, *args, **kwargs):
                     distinct=True
                     )
                 )
+            context = { 
+                'discussions': discussions,
+                'menu': 'messages'
+            }
         if request.user.is_staff:
             discussions = Discussion.objects.filter(campaign__agent=request.user).annotate(
                 message_count=Count(
@@ -36,10 +40,10 @@ def message_list(request, *args, **kwargs):
                     distinct=True
                     )
                 )
-        context = { 
-            'discussions': discussions,
-            'menu': 'messages'
-        }
+            context = { 
+                'discussions': discussions,
+                'menu': 'influencer_messages'
+            }
 
         context.update(get_num_notification(request))
         if request.GET.get('invited') == 'true':
@@ -47,6 +51,36 @@ def message_list(request, *args, **kwargs):
             context.update({'discussion_id': discussion_id})
             return render(request, 'messages/index.html', context)
         return render(request, 'messages/index.html', context)
+
+def client_message_list(request, *args, **kwargs):
+    if request.method == 'GET':
+        context = dict()
+        if request.user.is_client:
+            campaigns = Campaign.objects.filter(client=request.user).annotate(
+                message_count=Count(
+                    'message', 
+                    filter=Q(message__read_status=False, message__sent_to=request.user),
+                    distinct=True
+                )
+            )
+            context = {
+                'campaigns': campaigns,
+                'menu': 'messages',
+            }
+        if request.user.is_staff:
+            campaigns = Campaign.objects.filter(agent=request.user).annotate(
+                message_count=Count(
+                    'message', 
+                    filter=Q(message__read_status=False, message__sent_to=request.user),
+                    distinct=True
+                )
+            )
+            context = {
+                'campaigns': campaigns,
+                'menu': 'client_messages',
+            }
+        context.update(get_num_notification(request))
+    return render(request, 'messages/client_index.html', context)
 
 def create_message(request, *args, **kwargs):
     if request.method == 'POST':
@@ -80,12 +114,40 @@ def create_message(request, *args, **kwargs):
 
         return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id).order_by('sent_at'),})
 
+def create_client_message(request, *args, **kwargs):
+    if request.method == 'POST':
+        campaign_id = request.POST.get('campaign_id')
+        campaign = Campaign.objects.get(pk=campaign_id)
+        content = request.POST.get('content')
+        type = request.POST.get('type')
+
+        message = Message()
+        if type == 'CA':
+            message.sent_by = campaign.client
+            message.sent_to = campaign.agent
+        else:
+            message.sent_by = campaign.agent
+            message.sent_to = campaign.client
+
+        message.campaign = campaign
+        message.content = content
+        message.save()
+
+        return render(request, 'messages/client_message_body.html', {'channel_messages': Message.objects.filter(campaign__id=campaign_id).order_by('sent_at'),'description': campaign})
+
 def all_channel_messages(request, *args, **kwargs):
     channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk')).order_by('sent_at')
     Message.objects.filter(discussion__id=kwargs.get('pk'),sent_to=request.user).update(read_status=True)
     discussion = Discussion.objects.get(pk=kwargs.get('pk'))
         
     return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk'), 'description': discussion})
+
+def all_campaign_messages(request, *args, **kwargs):
+    channel_messages = Message.objects.filter(campaign__id=kwargs.get('pk')).order_by('sent_at')
+    Message.objects.filter(campaign__id=kwargs.get('pk'),sent_to=request.user).update(read_status=True)
+    campaign = Campaign.objects.get(pk=kwargs.get('pk'))
+        
+    return render(request, 'messages/client_channel.html', {'channel_messages': channel_messages, 'campaign_id': kwargs.get('pk'), 'description': campaign})
 
 def read_message(request, *args, **kwargs):
     if request.method == 'POST':
