@@ -15,8 +15,11 @@
                             <label>Brand Name: {{invitation.campaign.brand_name}}</label><br/>
                             <label>Brand Category: {% for item in invitation.campaign.brand_category%} {{item.0}}, {% endfor %}</label><br/>
                             <label>Brand Attributes: {{invitation.campaign.brand_attributes}}</label><br/>
-                            <label>Touchpoint: {{inviation.campaign.touchpoint}}</label><br/>
-                            <label>Campaign Brief: {{inviation.campaign.campaign_brief}}</label><br/>
+                            <label>Touchpoint: {{invitation.campaign.touchpoint|default_if_none:''}}</label><br/>
+                            <label>Profession: {{invitation.campaign.profession|default_if_none:''}}</label><br/>
+                            <label>Personality: {{invitation.campaign.personality|default_if_none:''}}</label><br/>
+                            <label>Campaign Brief: {{invitation.campaign.campaign_brief|default_if_none:''}}</label><br/>
+                            <label>Campaign KPI: {{invitation.campaign.campaign_kpis|default_if_none:''}}</label><br/>
                         </div>
                         <div class="card-footer text-center">
                             Would you like to accept the invitation? <br/>
