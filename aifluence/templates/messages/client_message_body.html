@@ -5,7 +5,7 @@
     <span class="message-campaign-brief">Brand Attributes:</span> {{ description.brand_attributes }}<br/>
     <span class="message-campaign-brief">Key Selling Point:</span> {{ description.key_selling_point }}<br/>
     <span class="message-campaign-brief">Brief:</span> {{ description.campaign_brief}}<br/>
-    <span class="message-campaign-brief">Location:</span> {% for ll in description.location %} {ll.0} {% empty %} All over the world {% endfor %}<br/>
+    <span class="message-campaign-brief">Location:</span> {% for ll in description.location %} {{ll}} {% empty %} All over the world {% endfor %}<br/>
 </div>
 {% for channel_message in channel_messages %}
 <div class="row mt-2">

@@ -21,7 +21,7 @@
                     <span class="message-campaign-brief">Brand Attributes:</span> {{ channel_message.discussion.campaign.brand_attributes }}<br/>
                     <span class="message-campaign-brief">Key Selling Point:</span> {{ channel_message.discussion.campaign.key_selling_point }}<br/>
                     <span class="message-campaign-brief">Brief:</span> {{ channel_message.discussion.campaign.campaign_brief}}<br/>
-                    <span class="message-campaign-brief">Location:</span> {% for ll in channel_message.discussion.campaign.location %} {ll.0} {% empty %} All over the world {% endfor %}<br/>
+                    <span class="message-campaign-brief">Location:</span> {% for ll in channel_message.discussion.campaign.location %} {{ll}} {% empty %} All over the world {% endfor %}<br/>
                     <p class=" mt-2"> We highly recommend you to use the posting style of <span class="text-success">{{ channel_message.content }}</span> for this campaign after carefully matching your expeirences & campaign details.</p>
                 {% else %}
                     <p class=" message-row" data-id="{{channel_message.id}}">{{ channel_message.content|safe }}</p>

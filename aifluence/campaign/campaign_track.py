@@ -1,11 +1,12 @@
+import sys
 import instaloader
 import re
 
-class CampaignTracker(campaign_id):
+class CampaignTracker:
     def __init__(self):
         self.L = instaloader.Instaloader(max_connection_attempts=30)
-    
-    def getEngagement(url):
+        
+    def getEngagement(self, url):
         pattern = re.compile("https://www.instagram.com/p/", re.IGNORECASE)
         post_id = pattern.sub("", url).replace("/", "")
 
@@ -14,3 +15,4 @@ class CampaignTracker(campaign_id):
         comments = post.comments
         print(' --- post likes --- ', likes)
         print(' --- post comments --- ', comments)
+        return {'post': likes, 'comments':comments}

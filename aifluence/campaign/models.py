@@ -42,9 +42,7 @@ class Campaign(models.Model):
     personality = models.CharField(max_length=255)
     profession = models.CharField(max_length=255)
     location = ArrayField(
-        ArrayField(
-            models.CharField(max_length=30, blank=True),
-        ), 
+        models.CharField(max_length=30, blank=True, choices=CONSTANTS.COUNTRY_CHOICES),
         null=True, 
         blank=True
     )

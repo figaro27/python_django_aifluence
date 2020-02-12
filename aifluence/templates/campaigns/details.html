@@ -47,8 +47,8 @@
                             <td class="text-left d-none d-md-table-cell text-nowrap align-middle"><a href="{{ item.url }}" target="_blank">{{ item.url }}</a></td>
                             <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.influencer.instagram_account}}</td>
                             <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.post_date|date:"d M Y"}}</td>
-                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">123</td>
-                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">543</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% for likes in item.analysis.items %}{{likes}}{% endfor %}</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% for comments in item.analysis.items %}{{comments}}{% endfor %}</td>
                             <td class="text-right d-none d-md-table-cell text-nowrap ">
                                 <a href="{{ item.media.media.url }}" class="btn btn-info btn-sm" download><i class="fa fa-download"></i></a><br/>
                             </td>

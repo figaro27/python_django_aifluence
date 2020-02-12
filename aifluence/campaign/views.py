@@ -12,6 +12,7 @@ from invitation.models import Invitation
 from message.models import Message
 from users.models import User, Influencer
 from .forms import CampaignForm
+from .campaign_track import CampaignTracker
 from dashboard.views import get_num_notification
 import aifluence.constants as CONSTANTS
 from operator import attrgetter
@@ -36,6 +37,22 @@ def campaign_view(request, *args, **kwargs):
     if request.method == 'GET':
         campaign_id = kwargs.get('pk')
         post_list = Post.objects.filter(campaign__id=campaign_id, is_posted=True)
+        context = dict()
+        context = {
+            'post_list': post_list,
+            'campaign': Campaign.objects.get(pk=campaign_id),
+            'menu': 'campaign',
+        }
+        context.update(get_num_notification(request))
+        return render(request, 'campaigns/details.html', context)
+
+    if request.method == 'POST':
+        # tracker = CampaignTracker()
+        post_list = Post.objects.filter(campaign__id=campaign_id, is_posted=True)
+        # for post in post_list:
+            # engagement = tracker.getEngagement(post.url)
+            # Post.objects.filter(url=post.url).update(analysis={'likes':engagement['likes'], 'comments':engagement['comments']})
+
         context = dict()
         context = {
             'post_list': post_list,
