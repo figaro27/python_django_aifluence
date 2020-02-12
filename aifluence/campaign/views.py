@@ -63,7 +63,7 @@ def campaign_status_update(request, *args, **kwargs):
         for post in post_list:
             engagement = tracker.getEngagement(post.url)
             post.analysis={'likes':engagement['likes'], 'comments':engagement['comments']}
-
+            Post.objects.filter(id=post.id).update(analysis={'likes':engagement['likes'], 'comments':engagement['comments']})
         context = dict()
         context = {
             'post_list': post_list,
