@@ -137,7 +137,7 @@ def campaign_invite_influencers(request, *args, **kwargs):
             if (len(campaign.location) > 0):
                 locations_filtered_followers = 0
                 for location in campaign.location:
-                    locationName = countries[location[0]] if (location[0] in countries) else ""
+                    locationName = countries[location] if (location in countries) else ""
                     portion = influencer.locations[locationName]['percent'] / 100 if (locationName in influencer.locations) > 0 else 0
                     if portion > 0:
                         locations_filtered_followers += influencer.filtered_followers * portion
