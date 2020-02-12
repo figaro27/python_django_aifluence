@@ -767,4 +767,4 @@ POST_STATUS_CHOICES = (
     ('DE', 'Declined'),
 )
 
-POST_STYLES = ["Product Post", "Video", "Screenshot Posts","Infographics"]
+POST_STYLES = ["Image", "Video", "Sidebar"]
