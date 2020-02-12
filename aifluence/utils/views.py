@@ -23,9 +23,9 @@ def dp_import(request):
         
         # get account name, platform from file name
         filename = dp_analysis_file.name
-        influencer_info = filename.split("@")[1].split(".csv")[0].split("_")
+        influencer_info = filename.split("_@")[1].split(".csv")[0].split("_on_")
         influencer_account = influencer_info[0]
-        influencer_platform = PLATFORM_CHOICES[influencer_info[2]]
+        influencer_platform = PLATFORM_CHOICES[influencer_info[1]]
 
         # read analysis csv file
         analysis_data = dp_analysis_file.read().decode("utf-8")
