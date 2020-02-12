@@ -12,7 +12,7 @@
         <div class="card-header">
             <span class="font-weight-bold">Campaign Details</span>
             <a href="{% url 'active_campaigns' %}" class="btn btn-secondary btn-sm text-white float-right ml-2">Back</a>
-            <a href="#" class="btn btn-primary btn-sm text-white float-right">Update Status</a>
+            <a href="{% url 'campaign_status_update' pk=campaign.id %}" class="btn btn-primary btn-sm text-white float-right">Update Status</a>
         </div>
         <div class="card-body">
             <label>Brand Name: </label> {{ campaign.brand_name }}<br>
@@ -20,7 +20,7 @@
             <label>Brand Attributes: </label> {{ campaign.brand_attributes }}<br/>
             <label>Key Selling Point: </label> {{ campaign.key_selling_point }}<br/>
             <label>Brief: </label> {{ campaign.campaign_brief}}<br/>
-            <label>Location: </label> {% for ll in campaign.location %} {ll.0} {% empty %} All over the world {% endfor %}<br/>
+            <label>Location: </label> {% for ll in campaign.location %} {{ll}} {% empty %} All over the world {% endfor %}<br/>
             <label>Budget: </label>
             {% if campaign.campaign_currency == 'usd' %}$ {% else %}€ {% endif %}{{ campaign.campaign_budget }}<br/>
         </div>
@@ -47,8 +47,8 @@
                             <td class="text-left d-none d-md-table-cell text-nowrap align-middle"><a href="{{ item.url }}" target="_blank">{{ item.url }}</a></td>
                             <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.influencer.instagram_account}}</td>
                             <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.post_date|date:"d M Y"}}</td>
-                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% for likes in item.analysis.items %}{{likes}}{% endfor %}</td>
-                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% for comments in item.analysis.items %}{{comments}}{% endfor %}</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% for key,value in item.analysis.items %}{% if key == 'likes' %}<i class="fa fa-heart text-danger"></i>{{value|default_if_none:'0'}}{% endif %}{% endfor %}</td>
+                            <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% for key,value in item.analysis.items %}{% if key == 'comments' %}<i class="fa fa-comment text-success"></i>{{value|default_if_none:'0'}}{% endif %}{% endfor %}</td>
                             <td class="text-right d-none d-md-table-cell text-nowrap ">
                                 <a href="{{ item.media.media.url }}" class="btn btn-info btn-sm" download><i class="fa fa-download"></i></a><br/>
                             </td>

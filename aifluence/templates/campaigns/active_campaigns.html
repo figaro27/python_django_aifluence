@@ -10,8 +10,9 @@
     <tr class="border-bottom">
         <th class="text-left d-none d-md-table-cell text-nowrap">Brand Name</th>
         <th class="text-left d-none d-md-table-cell text-nowrap">Brand Attributes</th>
-        <th class="text-left d-none d-md-table-cell text-nowrap">Campaign Brief</th>
-        <th class="text-left d-none d-md-table-cell text-nowrap">Campaign Budget</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Brief</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Budget</th>
+        <th class="text-left d-none d-md-table-cell text-nowrap">Engagement</th>
         <th></th>
     </tr>
     <tbody>
@@ -21,6 +22,7 @@
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.brand_attributes|slice:"0:30" }}..</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{{ item.campaign_brief|slice:"0:40" }}..</td>
                 <td class="text-left d-none d-md-table-cell text-nowrap align-middle">{% if item.campaign_currency == 'usd' %}${% else %}€{% endif %} {{item.campaign_budget}}</td>
+                <td class="text-left d-none d-md-table-cell text-nowrap align-middle"><i class="fa fa-heart text-danger"></i>{{item.total_likes|default_if_none:'0'}} <i class="fa fa-comment text-success"></i>{{item.total_comments|default_if_none:'0'}}</td>
                 <td class="text-right d-none d-md-table-cell text-nowrap ">
                     <a href="{% url 'campaign_invite_influencers' pk=item.id %}" class="btn btn-secondary btn-sm" style="width:120px;"> Send Invitation</a><br/>
                     <a href="{% url 'campaign_view' pk=item.id %}" class="btn btn-info btn-sm mt-1" style="width:120px;"> View Status </a>

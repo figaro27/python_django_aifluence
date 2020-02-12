@@ -15,4 +15,4 @@ class CampaignTracker:
         comments = post.comments
         print(' --- post likes --- ', likes)
         print(' --- post comments --- ', comments)
-        return {'post': likes, 'comments':comments}
+        return {'likes': likes, 'comments':comments}

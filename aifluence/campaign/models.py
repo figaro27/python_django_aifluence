@@ -74,6 +74,9 @@ class Discussion(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return "Inf " + str(self.influencer.id) + "-Cli" + str(self.campaign.client.id) 
+
 class Contract(models.Model):
     discussion = models.ForeignKey(Discussion, on_delete=CASCADE, null=True)
     contract_title = models.CharField(max_length=255, blank=True, null=True)
@@ -84,7 +87,7 @@ class Contract(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.discussion.campaign + " - " + self.discussion.campaign.client + " - " + self.discussion.influencer
+        return self.contract_title
 
 class Media(models.Model):
     title = models.CharField(max_length=255, blank=True, null=True)
@@ -95,6 +98,8 @@ class Media(models.Model):
     contract = models.ForeignKey(Contract, on_delete=CASCADE, null=True)
     status = models.CharField(max_length=2, choices=CONSTANTS.POST_STATUS_CHOICES, default='CR')
 
+    def __str__(self):
+        return self.title
 class Post(models.Model):
     media = models.ForeignKey(Media, on_delete=CASCADE, null=True)
     is_posted = models.BooleanField('Status', default=False)

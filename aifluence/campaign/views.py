@@ -2,8 +2,9 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 from django.contrib import messages
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.http import HttpResponseRedirect
-from django.db.models import Q, Count, F, IntegerField
+from django.db.models import Q, Count, F, IntegerField, Sum
 from django.db.models.functions import Cast
 
 from campaign.models import Campaign, Contract, Discussion, Media, Post
@@ -16,7 +17,7 @@ from .campaign_track import CampaignTracker
 from dashboard.views import get_num_notification
 import aifluence.constants as CONSTANTS
 from operator import attrgetter
-
+import random
 # Create your views here.
 class ActiveCampaigns(ListView):
     model = Campaign
@@ -32,7 +33,15 @@ class ActiveCampaigns(ListView):
         return context
     def get_queryset(self):
         queryset = Campaign.objects.filter(client=self.request.user)
+
+        for qqq in queryset:
+            posts = Post.objects.filter(campaign__id=qqq.id, is_posted=True).annotate(aa=Cast(KeyTextTransform('likes', 'analysis'), IntegerField()),
+                    bb=Cast(KeyTextTransform('comments', 'analysis'), IntegerField())) \
+                .aggregate(total_likes=Sum('aa'), total_comments=Sum('bb'))
+            qqq.total_likes = posts['total_likes']
+            qqq.total_comments = posts['total_comments']
         return queryset
+
 def campaign_view(request, *args, **kwargs):
     if request.method == 'GET':
         campaign_id = kwargs.get('pk')
@@ -46,12 +55,14 @@ def campaign_view(request, *args, **kwargs):
         context.update(get_num_notification(request))
         return render(request, 'campaigns/details.html', context)
 
-    if request.method == 'POST':
-        # tracker = CampaignTracker()
+def campaign_status_update(request, *args, **kwargs):
+    if request.method == 'GET':
+        tracker = CampaignTracker()
+        campaign_id = kwargs.get('pk')
         post_list = Post.objects.filter(campaign__id=campaign_id, is_posted=True)
-        # for post in post_list:
-            # engagement = tracker.getEngagement(post.url)
-            # Post.objects.filter(url=post.url).update(analysis={'likes':engagement['likes'], 'comments':engagement['comments']})
+        for post in post_list:
+            engagement = tracker.getEngagement(post.url)
+            post.analysis={'likes':engagement['likes'], 'comments':engagement['comments']}
 
         context = dict()
         context = {
@@ -225,7 +236,7 @@ def create_discussion(invitation, influencer):
     discussion.influencer = influencer
     discussion.invitation = invitation
     discussion.influencer_platform = invitation.influencer_platform
-    discussion.posting_suggestion = 'Video style'
+    discussion.posting_suggestion = CONSTANTS.POST_STYLES[random.randrange(0, len(CONSTANTS.POST_STYLES))]
     discussion.save()
 
     message = Message()

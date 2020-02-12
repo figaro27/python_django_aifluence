@@ -34,3 +34,6 @@ class Invitation(models.Model):
     last_sent_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(max_length=2, choices=INVITATION_STATUS, default='CR')
     analysis = models.ForeignKey(Analysis, on_delete=CASCADE, null=True)
+
+    def __str__(self):
+        return self.client.first_name + " " + self.client.last_name

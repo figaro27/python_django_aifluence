@@ -766,3 +766,5 @@ POST_STATUS_CHOICES = (
     ('AC', 'Accepted'),
     ('DE', 'Declined'),
 )
+
+POST_STYLES = ["Product Post", "Video", "Screenshot Posts","Infographics"]
