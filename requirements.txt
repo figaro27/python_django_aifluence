@@ -7,3 +7,4 @@ djangorestframework
 InstagramApi
 instaloader
 urllib3
+requests-async
