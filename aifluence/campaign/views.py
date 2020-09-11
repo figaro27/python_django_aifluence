@@ -6,6 +6,7 @@ from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.http import HttpResponseRedirect
 from django.db.models import Q, Count, F, IntegerField, Sum
 from django.db.models.functions import Cast
+import asyncio
 
 from campaign.models import Campaign, Contract, Discussion, Media, Post
 from influencer.models import Analysis
@@ -18,6 +19,8 @@ from dashboard.views import get_num_notification
 import aifluence.constants as CONSTANTS
 from operator import attrgetter
 import random
+from utils.chat import create_session, create_dialog, create_user, login_chat
+
 # Create your views here.
 class ActiveCampaigns(ListView):
     model = Campaign
@@ -81,7 +84,7 @@ def campaign_create(request):
         context['brand_categories'] = CONSTANTS.BRAND_CATEGORY_CHOICES
         context['age_ranges'] = CONSTANTS.AGE_RANGE_CHOICES
         context['social_statuses'] = CONSTANTS.SOCIAL_STATUS_CHOICES
-        context['interests'] = CONSTANTS.INTERESTS_CHOICES        
+        context['interests'] = CONSTANTS.INTERESTS_CHOICES
         context['countries'] = CONSTANTS.COUNTRY_CHOICES
         context['menu'] = 'campaign'
         context.update(get_num_notification(request))
@@ -89,10 +92,20 @@ def campaign_create(request):
     else:
         form = CampaignForm(request.POST)
         if form.is_valid():
-            campaign = form.save(commit = False) 
+            campaign = form.save(commit = False)
             campaign.client = request.user
             campaign.agent = User.objects.filter(is_staff=True).exclude(is_superuser=True).annotate(Count('agent', distinct=True)).order_by('agent__count').first()
             campaign.save()
+            # QB create group dialog of campaign and assigned agent
+            dialog_name = request.session['username'] + '__' + campaign.agent.username + '__' + str(campaign.id)
+            cam_brand_category = ''
+            for category in campaign.brand_category:
+                cam_brand_category = cam_brand_category + category[0] + ' '
+            cam_location = ''
+            for location in campaign.location:
+                cam_location = cam_location + location + ' '
+            campaign_detail = '<span class=\'campaign_detail_key\'>Brand Name: </span>' + campaign.brand_name + '<br><span class=\'campaign_detail_key\'>Brand Category: </span>' + cam_brand_category + '<br><span class=\'campaign_detail_key\'>Brand Attributes: </span>' + campaign.brand_attributes + '<br><span class=\'campaign_detail_key\'>Key Selling Point: </span>' + campaign.key_selling_point + '<br><span class=\'campaign_detail_key\'>Brief: </span>' + campaign.campaign_brief + '<br><span class=\'campaign_detail_key\'>Location: </span>' + cam_location + '<br><span class=\'campaign_detail_key\'>Budget: </span>' + str(campaign.campaign_budget)
+            asyncio.run(create_dialog(request.session['chat_session_token'], dialog_name, request.session['username'], campaign.agent.chat_id, CONSTANTS.QB_CONFIG['chat']['dialog_custom_type']['CA'], campaign.id, campaign.campaign_brief, campaign_detail))
         return redirect('active_campaigns')
 
 def campaign_invite_influencers(request, *args, **kwargs):
@@ -112,7 +125,7 @@ def campaign_invite_influencers(request, *args, **kwargs):
                 influencer.invite_status = ""
             else:
                 influencer.invite_status = invitations.first().get_status_display
-            influencer.followers = influencer.basics['gender']['Male']['number'] + influencer.basics['gender']['Female']['number'] 
+            influencer.followers = influencer.basics['gender']['Male']['number'] + influencer.basics['gender']['Female']['number']
 
             # filter by age range
             influencer.filtered_followers = influencer.followers
@@ -156,7 +169,7 @@ def campaign_invite_influencers(request, *args, **kwargs):
                 influencer.filtered_followers = int(social_status_filtered_followers)
 
         influencer_list = sorted(influencer_list, key=attrgetter('filtered_followers'), reverse=True)
-        
+
         context = dict()
         context['menu'] = 'campaign'
         context['object_list'] = influencer_list
@@ -187,12 +200,12 @@ def contract_view(request, *args, **kwargs):
         post_actived = True
         if (request.GET.get('post_actived') == '0'):
             post_actived = False
-        
+
         context = {
-            'menu': 'contracts', 
-            'contract': contract, 
-            'media_list': Media.objects.filter(contract=contract).order_by('created_at'), 
-            'post_list': Post.objects.filter(media__contract=contract).order_by('post_date'),  
+            'menu': 'contracts',
+            'contract': contract,
+            'media_list': Media.objects.filter(contract=contract).order_by('created_at'),
+            'post_list': Post.objects.filter(media__contract=contract).order_by('post_date'),
             'post_actived': post_actived,
         }
         context.update(get_num_notification(request))
@@ -216,7 +229,7 @@ def contract_offer_agreement(request, *args, **kwargs):
             content = "The contract <span class='font-weight-bold'>" + contract.contract_title + "</span> has been declined.<br/>" + comment
             contract_status = 'DE'
         else:
-            content = "<span class='text-success'>Congratulations!</span><br/>The contract <span class='font-weight-bold'>" + contract.contract_title + "</span> has been accepted.<br/>" + comment 
+            content = "<span class='text-success'>Congratulations!</span><br/>The contract <span class='font-weight-bold'>" + contract.contract_title + "</span> has been accepted.<br/>" + comment
         message.content = content
         message.save()
 

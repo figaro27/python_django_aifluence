@@ -42,6 +42,9 @@ class CustomizedInstagramAPI(InstagramAPI):
         # Check if URLS are present in text 
 
         urls = self.find_urls(text)
+
+        print(len(urls))
+
         if(len(urls) >= 1):
             endpoint = 'direct_v2/threads/broadcast/link/'
             bodies.append({
@@ -62,7 +65,7 @@ class CustomizedInstagramAPI(InstagramAPI):
             })
 
 
-        data = self.buildBody(bodies,boundary)
+        data = self.buildBody(bodies, boundary)
         self.s.headers.update (
             {
                 'User-Agent' : self.USER_AGENT,
@@ -90,23 +93,35 @@ class CustomizedInstagramAPI(InstagramAPI):
                 pass
             return False
 
+    def get_user_info(self, influencer_account):
+        boundary = self.uuid
+        self.s.headers.update (
+            {
+                'User-Agent' : self.USER_AGENT,
+                'Proxy-Connection' : 'keep-alive',
+                'Connection': 'keep-alive',
+                'Accept': '*/*',
+                'Content-Type': 'multipart/form-data; boundary={}'.format(boundary),
+                'Accept-Language': 'en-en',
+            }
+        )
+        url = "https://www.instagram.com/web/search/topsearch/?context=blended&query=" + influencer_account + "&count=1"
+        return self.s.get(url)
+
 def send_instagram_invitation(influencer_account, campaign_id, invitation_key):
     username = 'wilsonzh1011'
     pwd = 'Asdfg@123#'
 
     time.sleep(1)
-    API = CustomizedInstagramAPI(username,pwd)
+    API = CustomizedInstagramAPI(username, pwd)
     API.login()
-
-    influencer_url = "https://www.instagram.com/web/search/topsearch/?context=blended&query=" + influencer_account + "&count=1"
-    response = requests.get(influencer_url)
-    respJSON = response.json()
+    
+    respJSON = API.get_user_info(influencer_account).json()    
     influencer_user_id = str(respJSON['users'][0].get("user").get("pk"))
-
     invitation_message = "Dear " + str(respJSON['users'][0].get("user").get("full_name")) + ",\n"
     invitation_message += "We invite you to the marketing campaign you'd be interested in.\n"
     invitation_message += "Please signup our platform using below url:\n"
-    invitation_message += "http://34.70.215.133/" + "invitations/" + invitation_key
+    invitation_message += "http://local.aifluence.com/" + "invitations/" + invitation_key
 
     res = API.direct_message(invitation_message, [influencer_user_id])
     API.logout()
@@ -117,3 +132,5 @@ def send_invitation(influencer_account, influencer_platform, campaign_id, invita
     if influencer_platform == "IN":
         res = send_instagram_invitation(influencer_account, campaign_id, invitation_key)
     return res
+
+

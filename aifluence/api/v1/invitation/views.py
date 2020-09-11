@@ -32,10 +32,10 @@ class InviteInfluencerView(APIView):
 
         if action=='invite':
 
-            #send invitation in instagram 
+            #send invitation in instagram
             try:
                 invitations = Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer)
-               
+
                 if invitations.count() > 0:
                     if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitations.first().invitation_key):
                         invitations.update(status='SE', last_sent_at=datetime.now())
@@ -56,6 +56,7 @@ class InviteInfluencerView(APIView):
                     if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitation.invitation_key):
                         invitation.status = 'SE'
                         invitation.last_sent_at = datetime.now()
+                        print('api/v1/invitation/views.py/inviation.last_sent_at+++++++++++++++++++++++++++++++++++++++', invitation.last_sent_at)
                         invitation.save()
                         code = 'success'
                     else:
@@ -78,7 +79,7 @@ class InviteInfluencerView(APIView):
                 code = 'success'
             except:
                 code = 'failed'
-        
+
         if code == 'success':
             return Response(status=status.HTTP_201_CREATED)
         elif code == 'failed':

@@ -33,6 +33,7 @@ urlpatterns = [
     path('campaigns/', include('campaign.urls')),
     path('utils/', include('utils.urls')),
     path('messages/', include('message.urls')),
+    path('chat/', include('chat.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include('api.urls', namespace='api')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

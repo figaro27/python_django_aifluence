@@ -21,29 +21,29 @@ class Campaign(models.Model):
     age_range = ArrayField(
         ArrayField(
             models.CharField(max_length=50, blank=True),
-        ), 
-        null=True, 
+        ),
+        null=True,
         blank=True
     )
     social_status = ArrayField(
         ArrayField(
             models.CharField(max_length=20, blank=True),
-        ), 
-        null=True, 
+        ),
+        null=True,
         blank=True
     )
     interests = ArrayField(
         ArrayField(
             models.CharField(max_length=30, blank=True),
-        ), 
-        null=True, 
+        ),
+        null=True,
         blank=True
     )
     personality = models.CharField(max_length=255)
     profession = models.CharField(max_length=255)
     location = ArrayField(
         models.CharField(max_length=30, blank=True, choices=CONSTANTS.COUNTRY_CHOICES),
-        null=True, 
+        null=True,
         blank=True
     )
     touchpoint = models.CharField(max_length=255, null=True, blank=True)
@@ -62,6 +62,10 @@ class Campaign(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # QB chat login and id
+    chat_login = models.CharField(max_length=20)
+    chat_id = models.IntegerField()
+
     def __str__(self):
         return self.brand_name
 
@@ -75,7 +79,7 @@ class Discussion(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "Inf " + str(self.influencer.id) + "-Cli" + str(self.campaign.client.id) 
+        return "Inf " + str(self.influencer.id) + "-Cli" + str(self.campaign.client.id)
 
 class Contract(models.Model):
     discussion = models.ForeignKey(Discussion, on_delete=CASCADE, null=True)
@@ -110,4 +114,3 @@ class Post(models.Model):
     influencer = models.ForeignKey(Influencer, on_delete=CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
