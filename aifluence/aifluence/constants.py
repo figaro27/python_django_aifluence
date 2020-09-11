@@ -3,13 +3,13 @@ BRAND_CATEGORY_CHOICES = ['Food & Dining', 'Media & Entertainment', 'Electronics
     ]
 
 AGE_RANGE_CHOICES = (
-    ('17_under', 'Age 17 and under'), 
-    ('18_20', 'Age 18 to 20'), 
-    ('21_24', 'Age 21 to 24'), 
-    ('25_29', 'Age 25 to 29'), 
-    ('30_34', 'Age 30 to 34'), 
-    ('35_44', 'Age 35 to 44'), 
-    ('45_54', 'Age 45 to 54'), 
+    ('17_under', 'Age 17 and under'),
+    ('18_20', 'Age 18 to 20'),
+    ('21_24', 'Age 21 to 24'),
+    ('25_29', 'Age 25 to 29'),
+    ('30_34', 'Age 30 to 34'),
+    ('35_44', 'Age 35 to 44'),
+    ('45_54', 'Age 45 to 54'),
     ('55_64', 'Age 55 to 64'),
     ('65_over', 'Age 65 and over')
 )
@@ -768,3 +768,40 @@ POST_STATUS_CHOICES = (
 )
 
 POST_STYLES = ["Image", "Video", "Sidebar"]
+
+QB_CONFIG = {
+    'credentials': {
+        'app_id': '85685',
+        'auth_key': 'NrRgdPEvaC4cUk7',
+        'auth_secret': 'ypkT6TM9fBqNvxn'
+    },
+    'url' : {
+        'base' : 'https://api.quickblox.com/',
+        'session' : 'session.json',
+        'users' : {
+            'base' : 'users.json',
+            'by_login' : 'users/by_login.json'
+        },
+        'login' : 'login.json',
+        'chat' : {
+            'dialog' : 'chat/Dialog.json'
+        }
+    },
+    'user' : {
+        'password' : 'Asdfg@123#'
+    },
+    'chat' : {
+        'dialog_type' : {
+            'PUBLIC_GROUP' : 1,
+            'GROUP' : 2,
+            'PRIVATE' : 3
+        },
+        'dialog_custom_type' : {
+            'CA' : 'Client-Agent',
+            'AI' : 'Agent-Influencer'
+        },
+        'custom_class' : {
+            'name' : 'DialogProps'
+        }
+    }
+}
