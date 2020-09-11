@@ -12,6 +12,8 @@ from message.models import Message
 from users.models import Influencer
 
 from dashboard.views import get_num_notification
+from utils.chat import get_dialogs
+import asyncio
 # Create your views here.
 
 def message_list(request, *args, **kwargs):
@@ -23,24 +25,24 @@ def message_list(request, *args, **kwargs):
                 return redirect('influencer_profile')
             discussions = Discussion.objects.filter(influencer__user=request.user).annotate(
                 message_count=Count(
-                    'message', 
+                    'message',
                     filter=Q(message__read_status=False, message__sent_to=request.user),
                     distinct=True
                     )
                 )
-            context = { 
+            context = {
                 'discussions': discussions,
                 'menu': 'messages'
             }
         if request.user.is_staff:
             discussions = Discussion.objects.filter(campaign__agent=request.user).annotate(
                 message_count=Count(
-                    'message', 
+                    'message',
                     filter=Q(message__read_status=False, message__sent_to=request.user),
                     distinct=True
                     )
                 )
-            context = { 
+            context = {
                 'discussions': discussions,
                 'menu': 'influencer_messages'
             }
@@ -58,7 +60,7 @@ def client_message_list(request, *args, **kwargs):
         if request.user.is_client:
             campaigns = Campaign.objects.filter(client=request.user).annotate(
                 message_count=Count(
-                    'message', 
+                    'message',
                     filter=Q(message__read_status=False, message__sent_to=request.user),
                     distinct=True
                 )
@@ -70,7 +72,7 @@ def client_message_list(request, *args, **kwargs):
         if request.user.is_staff:
             campaigns = Campaign.objects.filter(agent=request.user).annotate(
                 message_count=Count(
-                    'message', 
+                    'message',
                     filter=Q(message__read_status=False, message__sent_to=request.user),
                     distinct=True
                 )
@@ -99,7 +101,7 @@ def create_message(request, *args, **kwargs):
             contract.discussion = discussion
             contract.save()
             content = content + "<br/>You can accept or decline this offer <a href='#' onclick='contract_agree(this)' data-id='" + str(contract.id) + "'>here</a>!"
-            
+
         message = Message()
         if type == 'IA':
             message.sent_by = discussion.influencer.user
@@ -139,14 +141,14 @@ def all_channel_messages(request, *args, **kwargs):
     channel_messages = Message.objects.filter(discussion__id=kwargs.get('pk')).order_by('sent_at')
     Message.objects.filter(discussion__id=kwargs.get('pk'),sent_to=request.user).update(read_status=True)
     discussion = Discussion.objects.get(pk=kwargs.get('pk'))
-        
+
     return render(request, 'messages/channel.html', {'channel_messages': channel_messages, 'discussion_id': kwargs.get('pk'), 'description': discussion})
 
 def all_campaign_messages(request, *args, **kwargs):
     channel_messages = Message.objects.filter(campaign__id=kwargs.get('pk')).order_by('sent_at')
     Message.objects.filter(campaign__id=kwargs.get('pk'),sent_to=request.user).update(read_status=True)
     campaign = Campaign.objects.get(pk=kwargs.get('pk'))
-        
+
     return render(request, 'messages/client_channel.html', {'channel_messages': channel_messages, 'campaign_id': kwargs.get('pk'), 'description': campaign})
 
 def read_message(request, *args, **kwargs):

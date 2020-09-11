@@ -5,11 +5,14 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.db.models import Q
 from django.views.generic import ListView
 from datetime import datetime
+import asyncio
 
 from .models import Invitation
 from users.models import Influencer
 from users.forms import UserCreationForm
 from campaign.views import create_discussion
+from utils.chat import create_dialog
+import aifluence.constants as CONSTANTS
 # Create your views here.
 from .forms import InvitationForm
 
@@ -33,7 +36,7 @@ def invitation_create(request):
     if request.method == 'POST':
         form = InvitationForm(request.POST)
         if form.is_valid():
-            invitation = form.save(commit = False) 
+            invitation = form.save(commit = False)
             invitation.save()
     else:
         form = InvitationForm()
@@ -47,7 +50,7 @@ def invitation_influencer(request, invitation_key=None):
     if invitation:
         if invitation.status == 'CA':
             return HttpResponseNotFound('<h1>Invitation has been canceled</h1>')
-        
+
         if (invitation.status == 'EX') or (invitation.last_sent_at and (datetime.now() - invitation.last_sent_at.replace(tzinfo=None)).days > 1):
             invitation.status = 'EX'
             invitation.save()
@@ -74,6 +77,17 @@ def invitation_accepted(request, invitation_key=None):
             users = Influencer.objects.filter(twitter_account=invitation.influencer_account)
 
         if (users.count() > 0):
+            # QB create group dialog of agent and influencer
+            dialog_name = request.session['username'] + '__' + invitation.campaign.agent.username + '__' + str(invitation.campaign.id)
+            cam_brand_category = ''
+            for category in invitation.campaign.brand_category:
+                cam_brand_category = cam_brand_category + category[0] + ' '
+            cam_location = ''
+            for location in invitation.campaign.location:
+                cam_location = cam_location + location + ' '
+            campaign_detail = '<span class=\'campaign_detail_key\'>Brand Name: </span>' + invitation.campaign.brand_name + '<br><span class=\'campaign_detail_key\'>Brand Category: </span>' + cam_brand_category + '<br><span class=\'campaign_detail_key\'>Brand Attributes: </span>' + invitation.campaign.brand_attributes + '<br><span class=\'campaign_detail_key\'>Key Selling Point: </span>' + invitation.campaign.key_selling_point + '<br><span class=\'campaign_detail_key\'>Brief: </span>' + invitation.campaign.campaign_brief + '<br><span class=\'campaign_detail_key\'>Location: </span>' + cam_location + '<br><span class=\'campaign_detail_key\'>Budget: </span>' + str(invitation.campaign.campaign_budget)
+            asyncio.run(create_dialog(request.session['chat_session_token'], dialog_name, request.session['username'], invitation.campaign.agent.chat_id, CONSTANTS.QB_CONFIG['chat']['dialog_custom_type']['AI'], invitation.campaign.id, invitation.campaign.campaign_brief, campaign_detail))
+            # asyncio.run(create_dialog(request.session['chat_session_token'], request.session['username'], invitation.campaign.agent.chat_id, CONSTANTS.QB_CONFIG['chat']['dialog_name']['AI']))
             discussion_id = create_discussion(invitation, users.first())
             if request.user.is_authenticated:
                 return redirect('/messages/?id=' + str(discussion_id) + '&invited=true')

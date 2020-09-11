@@ -1,3 +1,5 @@
+import asyncio
+
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib import messages
@@ -8,6 +10,7 @@ from .models import User, Influencer
 from .auth import EmailOrUsernameModelBackend
 from campaign.views import create_discussion
 from invitation.models import Invitation
+from utils.chat import create_session, create_user, login_chat
 
 def custom_login(request):
     if request.method == 'POST':
@@ -15,10 +18,19 @@ def custom_login(request):
         if form.is_valid():
             username = request.POST['username']
             password = request.POST['password']
-            
+
             user = EmailOrUsernameModelBackend.authenticate(request, username=username, password=password)
-            
             if user is not None:
+                # QB user login
+                chat_session_token = asyncio.run(create_session())
+                chat_id = asyncio.run(login_chat(chat_session_token, username))
+
+                request.session.clear()
+                request.session['username'] = username
+                request.session['password'] = password
+                request.session['chat_id'] = chat_id
+                request.session['chat_session_token'] = chat_session_token
+
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 if request.POST.get('invitation_key'):
                     return redirect('/influencer/profile?invitation_key=' + request.POST.get('invitation_key'))
@@ -35,20 +47,29 @@ def custom_login(request):
             return render(request, 'registration/login.html', {'form': form, 'invitation_key': request.GET.get('invitation_key')})
     return render(request, 'registration/login.html', {'form': form})
 
+
 def register(request):
     if request.method == 'POST':
         regform = UserCreationForm(request.POST)
         if regform.is_valid():
-            user = regform.save(commit = False) 
+            user = regform.save(commit = False)
             user.set_password(regform.cleaned_data.get('password2'))
             if (request.POST.get('is_client') == "1"):
                 user.is_client = True
             else:
                 user.is_influencer = True
+            # QB user register
+            chat_session_token = asyncio.run(create_session())
+            chat_id = asyncio.run(create_user(chat_session_token, user.username))
+            user.chat_id = chat_id
             user.save()
+
             if request.POST.get('invitation_key'):
                 return redirect('/login?invitation_key=' + request.POST.get('invitation_key'))
             return redirect('custom_login')
+        else:
+            print('-----------------------')
+            return redirect('register')
     else:
         regform = UserCreationForm()
         if request.GET.get('invitation_key'):
@@ -60,7 +81,7 @@ def influencer_profile(request):
         influencer = Influencer.objects.get(user=request.user)
     except Influencer.DoesNotExist:
         influencer = None
-        
+
     if request.method == 'GET':
         profileForm = InfluencerProfileForm(instance=influencer)
         if request.GET.get('invitation_key'):

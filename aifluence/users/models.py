@@ -6,9 +6,10 @@ from django.db.models import CASCADE, Model
 from django.utils.http import urlencode
 
 class User(AbstractUser):
-    
+
     is_client = models.BooleanField('Client status', default=False)
     is_influencer = models.BooleanField('Influencer status', default=False)
+    chat_id = models.IntegerField('QB chat id', default=0)
 
     def __str__(self):
         return self.first_name + " " + self.last_name
