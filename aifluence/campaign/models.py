@@ -63,8 +63,8 @@ class Campaign(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     # QB chat login and id
-    chat_login = models.CharField(max_length=20)
-    chat_id = models.IntegerField()
+    chat_login = models.CharField(max_length=20, default='')
+    chat_id = models.IntegerField('QB chat id', default=0)
 
     def __str__(self):
         return self.brand_name

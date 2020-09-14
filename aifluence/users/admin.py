@@ -6,12 +6,12 @@ from .models import User, Influencer
 
 class CustomUserAdmin(UserAdmin):
     model = User
-    list_display = ['email', 'username', 'first_name', 'last_name','is_staff', 'is_active', 'is_client', 'is_influencer']
-    list_filter = ('is_staff', 'is_active', 'is_client', 'is_influencer')
+    list_display = ['email', 'username', 'first_name', 'last_name','is_staff', 'is_active', 'is_client', 'is_influencer', 'chat_id']
+    list_filter = ('is_staff', 'is_active', 'is_client', 'is_influencer', 'chat_id')
     fieldsets = (
         (None, {'fields': ('email',)}),
         ('Personal info', {'fields': ('first_name', 'last_name')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser','is_client', 'is_influencer',
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser','is_client', 'is_influencer', 'chat_id',
                                        'groups', 'user_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
