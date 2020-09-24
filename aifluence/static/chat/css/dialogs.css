@@ -33,6 +33,10 @@
     text-decoration: none;
 }
 
+a.dialog__item_link:hover {
+    text-decoration: none;
+}
+
 .open_sidebar {
     border: none;
     width: 24px;

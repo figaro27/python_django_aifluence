@@ -53,10 +53,10 @@
 <script>
     $(document).ready(function() {
         $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
-        
+
         $('#id_message').on('keyup', function(){
             if ($(this).val() === ""){
-                $('#send_btn').addClass('disabled');        
+                $('#send_btn').addClass('disabled');
             }else {
                 $('#send_btn').removeClass('disabled');
             }
@@ -125,8 +125,8 @@
                 currency = '€';
             {% endif %}
 
-            var contract_offer_message = 'Contract <span class="text-info">' + $("#id_contract_title").val() + '</span> offered!<br/><br/>Terms: ' + 
-                                        $("#id_contract_terms").val() + '<br/> Budget: ' + 
+            var contract_offer_message = 'Contract <span class="text-info">' + $("#id_contract_title").val() + '</span> offered!<br/><br/>Terms: ' +
+                                        $("#id_contract_terms").val() + '<br/> Budget: ' +
                                         currency + $("#id_contract_budget").val();
 
             $.ajax({

@@ -9,11 +9,11 @@
     <li class="nav-item {% if menu == 'invitations' %} active {% endif %}">
         <a class="nav-link" href="{% url 'influencer_invitations' %}">Invitations</a>
     </li>
-    <li class="nav-item {% if menu == 'messages' %} active {% endif %}">
+    <!-- <li class="nav-item {% if menu == 'messages' %} active {% endif %}">
         <a class="nav-link" href="{% url 'message_list' %}">Discussions{% if numOfInfluencerMessage > 0 %}<span class="custom-notification position-absolute text-white" id="discussion_notify">{{numOfInfluencerMessage}}</span>{% endif %}</a>
-    </li>
-    <li class="nav-item {% if menu == 'AI_chat' %} active {% endif %}">
-        <a class="nav-link" href="{% url 'AI_chat' %}">Chat{% if numOfInfluencerMessage > 0 %}<span class="custom-notification position-absolute text-white" id="discussion_notify">{{numOfInfluencerMessage}}</span>{% endif %}</a>
+    </li> -->
+    <li class="nav-item {% if menu == 'IA_chat' %} active {% endif %}">
+        <a class="nav-link" href="{% url 'IA_chat' %}">Discussions</a>
     </li>
     <li class="nav-item {% if menu == 'profile' %} active {% endif %}">
         <a class="nav-link" href="{% url 'influencer_profile' %}">Profile</a>

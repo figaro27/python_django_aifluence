@@ -784,7 +784,8 @@ QB_CONFIG = {
         },
         'login' : 'login.json',
         'chat' : {
-            'dialog' : 'chat/Dialog.json'
+            'dialog' : 'chat/Dialog.json',
+            'message' : 'chat/Message.json'
         }
     },
     'user' : {

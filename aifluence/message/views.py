@@ -12,7 +12,7 @@ from message.models import Message
 from users.models import Influencer
 
 from dashboard.views import get_num_notification
-from utils.chat import get_dialogs
+from utils.chat import send_message
 import asyncio
 # Create your views here.
 
@@ -87,6 +87,8 @@ def client_message_list(request, *args, **kwargs):
 def create_message(request, *args, **kwargs):
     if request.method == 'POST':
         discussion_id = request.POST.get('discussion_id')
+        if request.POST.get('dialog_id'):
+            dialog_id = request.POST.get('dialog_id')
         discussion = Discussion.objects.get(pk=discussion_id)
         content = request.POST.get('content')
         type = request.POST.get('type')
@@ -102,6 +104,13 @@ def create_message(request, *args, **kwargs):
             contract.save()
             content = content + "<br/>You can accept or decline this offer <a href='#' onclick='contract_agree(this)' data-id='" + str(contract.id) + "'>here</a>!"
 
+        # QB chat send message from agent to influencer
+        # asyncio.run(send_message(
+        #     request.session['chat_session_token'],
+        #     dialog_id,
+        #     content
+        # ))
+
         message = Message()
         if type == 'IA':
             message.sent_by = discussion.influencer.user
@@ -114,7 +123,10 @@ def create_message(request, *args, **kwargs):
         message.content = content
         message.save()
 
-        return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id).order_by('sent_at'),})
+        if dialog_id:
+            return HttpResponse(contract.id)
+        else:
+            return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion__id=discussion_id).order_by('sent_at'),})
 
 def create_client_message(request, *args, **kwargs):
     if request.method == 'POST':

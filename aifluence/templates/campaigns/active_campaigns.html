@@ -29,8 +29,8 @@
                 </td>
             </tr>
             {% empty %}
-            <tr>    
-                <td align="center" colspan="5" class="align-content-center">No campaigns have been created. Would you like to <a href="#" class="add-btn">add a new one?</a></td>
+            <tr>
+                <td align="center" colspan="5" class="align-content-center">No campaigns have been created. Would you like to <a href="{% url 'campaign_create' %}" class="add-btn">add a new one?</a></td>
             </tr>
         {% endfor %}
     </tbody>

@@ -3,7 +3,7 @@ from django.views.generic import ListView
 from django.db.models.expressions import RawSQL
 from django.contrib import messages
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.db.models import Q, Count, F, IntegerField, Sum
 from django.db.models.functions import Cast
 import asyncio
@@ -19,7 +19,7 @@ from dashboard.views import get_num_notification
 import aifluence.constants as CONSTANTS
 from operator import attrgetter
 import random
-from utils.chat import create_session, create_dialog, create_user, login_chat
+from utils.chat import send_first_message, get_dialogs, send_message, create_dialog
 
 # Create your views here.
 class ActiveCampaigns(ListView):
@@ -105,7 +105,18 @@ def campaign_create(request):
             for location in campaign.location:
                 cam_location = cam_location + location + ' '
             campaign_detail = '<span class=\'campaign_detail_key\'>Brand Name: </span>' + campaign.brand_name + '<br><span class=\'campaign_detail_key\'>Brand Category: </span>' + cam_brand_category + '<br><span class=\'campaign_detail_key\'>Brand Attributes: </span>' + campaign.brand_attributes + '<br><span class=\'campaign_detail_key\'>Key Selling Point: </span>' + campaign.key_selling_point + '<br><span class=\'campaign_detail_key\'>Brief: </span>' + campaign.campaign_brief + '<br><span class=\'campaign_detail_key\'>Location: </span>' + cam_location + '<br><span class=\'campaign_detail_key\'>Budget: </span>' + str(campaign.campaign_budget)
-            asyncio.run(create_dialog(request.session['chat_session_token'], dialog_name, request.session['username'], campaign.agent.chat_id, CONSTANTS.QB_CONFIG['chat']['dialog_custom_type']['CA'], campaign.id, campaign.campaign_brief, campaign_detail))
+            dialog = asyncio.run(create_dialog(
+                    request.session['chat_session_token'],
+                    dialog_name,
+                    request.session['username'],
+                    campaign.agent.chat_id,
+                    CONSTANTS.QB_CONFIG['chat']['dialog_custom_type']['CA'],
+                    campaign.id,
+                    campaign.campaign_brief,
+                    campaign_detail))
+
+            send_first_message(campaign.agent.chat_id, dialog['_id'], "Thanks for your campaign")
+
         return redirect('active_campaigns')
 
 def campaign_invite_influencers(request, *args, **kwargs):
@@ -217,7 +228,7 @@ def contract_offer_agreement(request, *args, **kwargs):
         contract = Contract.objects.get(pk=contract_id)
         agreement = request.POST.get('agreement')
         comment = request.POST.get('comment')
-        message_id = request.POST.get('message_id')
+
         message = Message()
         message.sent_by = contract.discussion.influencer.user
         message.sent_to = contract.discussion.campaign.agent
@@ -236,11 +247,14 @@ def contract_offer_agreement(request, *args, **kwargs):
         contract.contract_status = contract_status
         contract.save()
 
-        offer_message = Message.objects.get(pk=message_id)
-        offer_message.content = offer_message.content.replace("contract_agree(this)", "")
-        offer_message.save()
-
-        return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion=contract.discussion).order_by('sent_at'),})
+        if request.POST.get('message_id'):
+            message_id = request.POST.get('message_id')
+            offer_message = Message.objects.get(pk=message_id)
+            offer_message.content = offer_message.content.replace("contract_agree(this)", "")
+            offer_message.save()
+            return render(request, 'messages/message_body.html', {'channel_messages': Message.objects.filter(discussion=contract.discussion).order_by('sent_at'),})
+        else:
+            return HttpResponse(content)
 
 def create_discussion(invitation, influencer):
 
@@ -252,18 +266,48 @@ def create_discussion(invitation, influencer):
     discussion.posting_suggestion = CONSTANTS.POST_STYLES[random.randrange(0, len(CONSTANTS.POST_STYLES))]
     discussion.save()
 
-    message = Message()
-    message.discussion = discussion
-    message.sent_by = invitation.campaign.agent
-    message.sent_to = influencer.user
-    message.content = discussion.posting_suggestion
-    message.save()
+    # message = Message()
+    # message.discussion = discussion
+    # message.sent_by = invitation.campaign.agent
+    # message.sent_to = influencer.user
+    # message.content = discussion.posting_suggestion
+    # message.save()
     return discussion.id
+
+def get_discussion(request, *args, **kwargs):
+    if request.method == 'GET':
+        discussion_id = kwargs['pk']
+        try:
+            discussion = Discussion.objects.get(pk=discussion_id)
+            return HttpResponse('true')
+        except:
+            return HttpResponse('false')
+
+def get_campaign(request, *args, **kwargs):
+    if request.method == 'GET':
+        campaign_id = kwargs['pk']
+        try:
+            campaign = Campaign.objects.get(pk=campaign_id)
+            return HttpResponse('true')
+        except:
+            return HttpResponse('false')
+
 
 def media_create(request, *args, **kwargs):
     if request.method == 'POST':
         contract_id = kwargs.get('pk')
         contract = Contract.objects.get(pk=contract_id)
+
+        message = Message()
+        message.sent_by = contract.discussion.influencer.user
+        message.sent_to = contract.discussion.campaign.agent
+        message.discussion = contract.discussion
+        message.content = "I have uploaded post media. Please take a look at <a href='/campaigns/contracts/" + str(contract.id) + "?post_actived=0d(this)'>here</a> and let me know your thought."
+        message.save()
+
+        res_dialog = asyncio.run(get_dialogs(request.session['chat_session_token'], contract.discussion_id))
+        asyncio.run(send_message(request.session['chat_session_token'], res_dialog['_id'], message.content))
+
         media = Media()
         media.title = request.POST.get('media_title')
         media.media = request.FILES['media_file']
@@ -271,13 +315,6 @@ def media_create(request, *args, **kwargs):
         media.upload_by = Influencer.objects.get(user=request.user)
         media.contract = contract
         media.save()
-
-        message = Message()
-        message.sent_by = contract.discussion.influencer.user
-        message.sent_to = contract.discussion.campaign.agent
-        message.discussion = contract.discussion
-        message.content = "I have uploaded post media. Please take a look at <a href='#' onclick='see_media_upload(this)' data-id='" + str(contract.id) + "'>here</a> and let me know your thought."
-        message.save()
 
         return redirect('/campaigns/contracts/' + str(contract_id) + '?post_actived=0')
 
@@ -308,6 +345,9 @@ def media_agreement(request, *args, **kwargs):
         message.discussion = media.contract.discussion
         message.content = content
         message.save()
+
+        res_dialog = asyncio.run(get_dialogs(request.session['chat_session_token'], media.contract.discussion_id))
+        asyncio.run(send_message(request.session['chat_session_token'], res_dialog['_id'], message.content))
 
         return redirect('/campaigns/contracts/' + str(media.contract.id) + '?post_actived=1')
 

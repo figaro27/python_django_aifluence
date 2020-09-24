@@ -32,18 +32,21 @@ Listeners.prototype.onMessageListener = function (userId, message) {
 
     if(userId === app.user.id){
         return false;
-    } 
+    }
 
     if(message.markable){
         messageModule.sendDeliveredStatus(msg._id, userId, msg.chat_dialog_id);
     }
 
+    var msg_dialog = {...msg}
+    if(msg_dialog.message) msg_dialog.message = msg_dialog.message.replace(/(<([^>]+)>)/gi, " ")
+
     if (dialog) {
         dialog.messages.unshift(msg);
-        dialogModule.changeLastMessagePreview(msg.chat_dialog_id, msg);
+        dialogModule.changeLastMessagePreview(msg.chat_dialog_id, msg_dialog);
 
         if(message.extension.notification_type){
-            return self.onNotificationMessage(userId, message);
+            return self.onNotificationMessage(userId, msg_dialog);
         }
 
         var activeTab = document.querySelector('.j-sidebar__tab_link.active'),

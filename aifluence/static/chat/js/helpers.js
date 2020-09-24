@@ -52,8 +52,9 @@ Helpers.prototype.checkIsMessageDeliveredToOccupants = function(message){
     return isDelivered;
 };
 
-Helpers.prototype.compileDialogParams = function (dialog) {
+Helpers.prototype.compileDialogParams = function (dialog_data) {
     var self = this;
+    var dialog = dialog_data;
 
     if(dialog.type === CONSTANTS.DIALOG_TYPES.CHAT){
         var user = {
@@ -73,12 +74,21 @@ Helpers.prototype.compileDialogParams = function (dialog) {
         campaign_brief = campaign_brief.substring(0, 20) + '...';
     }
 
+    var last_str = ""
+    if(dialog.last_message) last_str = dialog.last_message.replace(/(<([^>]+)>)/gi, " ")
+
     return {
         _id: dialog._id,
         name: dialog.name,
         type: dialog.type,
         color: dialog.color || getDialogColor() || _.random(1, 10),
-        last_message: dialog.last_message === CONSTANTS.ATTACHMENT.BODY ? 'Attachment' : dialog.last_message,
+        last_message: dialog.last_message === CONSTANTS.ATTACHMENT.BODY ?
+            'Attachment' :
+            !dialog.last_message ?
+                '' :
+                last_str.length > 20 ?
+                    last_str.substring(0, 20) + '...' :
+                    last_str,
         messages: [],
         attachment: dialog.last_message === CONSTANTS.ATTACHMENT.BODY,
         // last_message_date_sent comes in UNIX time.
@@ -93,7 +103,8 @@ Helpers.prototype.compileDialogParams = function (dialog) {
         },
         joined: false,
         campaign_brief: campaign_brief,
-        campaign_detail: dialog.data.campaign_detail
+        campaign_detail: dialog.data.campaign_detail,
+        discussion_id: dialog.data.discussion_id,
     };
 
     function getRecipientUserId(users) {
@@ -171,12 +182,13 @@ Helpers.prototype.getMessageStatus = function(message){
     return status;
 };
 
-Helpers.prototype.fillMessageBody = function (str) {
+Helpers.prototype.fillMessageBody = function (str, is_html) {
     var self = this,
         url,
         URL_REGEXP = /https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s\^\'\"\<\>\(\)]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s\^\'\"\<\>\(\)]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]\.[^\s\^\'\"\<\>\(\)]{2,}|www\.[a-zA-Z0-9]\.[^\s\^\'\"\<\>\(\)]{2,}/g;
 
-    str = self.escapeHTML(str);
+
+    //str = is_html == 'true' ? str : self.escapeHTML(str);
 
     // parser of paragraphs
     str = str.replace(/\n/g, '<br>');

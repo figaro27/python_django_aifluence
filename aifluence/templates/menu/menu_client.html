@@ -9,11 +9,11 @@
     <li class="nav-item {% if menu == 'reports' %} active {% endif %}">
         <a class="nav-link" href="#">Reports</a>
     </li>
-    <li class="nav-item {% if menu == 'messages' %} active {% endif %}">
+    <!-- <li class="nav-item {% if menu == 'messages' %} active {% endif %}">
         <a class="nav-link" href="{% url 'client_message_list' %}">Messages{% if numOfClientMessage > 0 %}<span class="custom-notification position-absolute text-white" id="campaign_notify">{{numOfClientMessage}}</span>{% endif %}</a>
-    </li>
-    <li class="nav-item {% if menu == 'CA_chat' %} active {% endif %}">
-        <a class="nav-link" href="{% url 'CA_chat' %}">Chat</a>
+    </li> -->
+    <li class="nav-item {% if menu == 'AC_chat' %} active {% endif %}">
+        <a class="nav-link" href="{% url 'AC_chat' %}">Chat</a>
     </li>
     <!-- <li class="nav-item {% if menu == 'profile' %} active {% endif %}">
         <a class="nav-link" href="#">Profile</a>

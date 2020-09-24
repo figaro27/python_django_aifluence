@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from invitation.models import Invitation
 from influencer.models import Analysis
-from campaign.models import Campaign
+from campaign.models import Campaign, Discussion
 from .serializers import InvitationSerializer
 from datetime import datetime
 from .engine import send_invitation
@@ -20,6 +20,15 @@ class InvitationViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Invitation.objects.all()
     serializer_class = InvitationSerializer
+
+class Discussion(APIView):
+    def get(self, request, format=None, *args, **kwargs):
+        discussion_id = kwargs.get('pk')
+        discussion = Discussion.objects.get(pk=discussion_id)
+        if(discussion):
+            return Response(discussion, status=status.HTTP_201_CREATED)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class InviteInfluencerView(APIView):
     def post(self, request, format=None, *args, **kwargs):
@@ -37,11 +46,15 @@ class InviteInfluencerView(APIView):
                 invitations = Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer)
 
                 if invitations.count() > 0:
+                    invitations.update(status='SE', last_sent_at=datetime.now())
+                    code = 'success'
+
                     if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitations.first().invitation_key):
                         invitations.update(status='SE', last_sent_at=datetime.now())
                         code = 'success'
                     else:
                         code = 'failed'
+
                 else:
                     invitation = Invitation()
                     invitation.client = request.user
@@ -53,6 +66,11 @@ class InviteInfluencerView(APIView):
                     invitation.analysis = influencer
                     invitation.save()
 
+                    invitation.status = 'SE'
+                    invitation.last_sent_at = datetime.now()
+                    invitation.save()
+                    code = 'success'
+
                     if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitation.invitation_key):
                         invitation.status = 'SE'
                         invitation.last_sent_at = datetime.now()
@@ -61,6 +79,7 @@ class InviteInfluencerView(APIView):
                         code = 'success'
                     else:
                         code = 'failed'
+
             except:
                 code = 'failed'
 

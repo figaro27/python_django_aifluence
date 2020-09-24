@@ -197,6 +197,7 @@
 
 .content__title {
     display: flex;
+    flex-direction: column;
     padding: 19px 16px;
     font-size: 15px;
     font-weight: 500;
@@ -369,9 +370,9 @@
     flex: 1 0;
 }
 
-.message__text_wrap {
+/* .message__text_wrap {
     flex: 1 0;
-}
+} */
 
 .message__text {
     margin: 0 0 10px 0;
@@ -398,9 +399,9 @@
     color: #4A4A4A;
 }
 
-.message__timestamp {
-    width: 30px;
-}
+/* .message__timestamp {
+
+} */
 
 .message_attachment {
     width: 100%;

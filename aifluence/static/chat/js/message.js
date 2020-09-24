@@ -86,7 +86,7 @@ Message.prototype.sendStopTypingStatus = function (dialogId) {
     self._typingTime = null;
 };
 
-Message.prototype.submitSendMessage = function (dialogId) {
+Message.prototype.submitSendMessage = function (dialogId, messageBody, isHtml) {
     if (!app.checkInternetConnection()) {
         return false;
     }
@@ -97,10 +97,12 @@ Message.prototype.submitSendMessage = function (dialogId) {
         sendMessageForm = document.forms.send_message,
         msg = {
             type: dialog.type === 3 ? 'chat' : 'groupchat',
-            body: sendMessageForm.message_feald ? sendMessageForm.message_feald.value.trim() : '',
+            body: messageBody ? messageBody : sendMessageForm.message_feald ? sendMessageForm.message_feald.value.trim() : '',
+            // body: sendMessageForm.message_feald ? sendMessageForm.message_feald.value.trim() : '',
             extension: {
                 save_to_history: 1,
-                dialog_id: dialogId
+                dialog_id: dialogId,
+                is_html: isHtml ? isHtml : false
             },
             markable: 1
         };
@@ -116,7 +118,6 @@ Message.prototype.submitSendMessage = function (dialogId) {
         dialog.draft.attachments = {};
     } else if (dialogModule.dialogId === dialogId && sendMessageForm) {
         var dialogElem = document.getElementById(dialogId);
-
         dialogModule.replaceDialogLink(dialogElem);
         document.forms.send_message.message_feald.value = '';
         dialog.draft.message = null;
@@ -161,6 +162,11 @@ Message.prototype.sendMessage = function(dialogId, msg){
     message.extension.dialog_id = dialogId;
 
     var newMessage = helpers.fillNewMessageParams(app.user.id, message);
+    newMessage.is_html = msg.extension.is_html.toString();
+
+    var new_message_noHtml = {...newMessage};
+
+    if(new_message_noHtml) new_message_noHtml.message = new_message_noHtml.message.replace(/(<([^>]+)>)/gi, " ")
 
     dialogModule._cache[dialogId].messages.unshift(newMessage);
 
@@ -168,7 +174,7 @@ Message.prototype.sendMessage = function(dialogId, msg){
         self.renderMessage(newMessage, true);
     }
 
-    dialogModule.changeLastMessagePreview(dialogId, newMessage);
+    dialogModule.changeLastMessagePreview(dialogId, new_message_noHtml);
 };
 
 Message.prototype.getMessages = function (dialogId) {
@@ -302,7 +308,8 @@ Message.prototype.renderMessage = function (message, setAsFirst) {
             date_sent: message.date_sent
         });
     } else {
-        messageText = message.message ? helpers.fillMessageBody(message.message || '') : helpers.fillMessageBody(message.body || '');
+
+        messageText = message.message ? helpers.fillMessageBody(message.message || '', message.is_html) : helpers.fillMessageBody(message.body || '', message.is_html);
 
         messagesHtml = helpers.fillTemplate('tpl_message', {
             message: {
@@ -315,6 +322,7 @@ Message.prototype.renderMessage = function (message, setAsFirst) {
                 is_sent: isSent
             },
             sender: sender});
+
     }
 
     var elem = helpers.toHtml(messagesHtml)[0];
@@ -329,7 +337,7 @@ Message.prototype.renderMessage = function (message, setAsFirst) {
 
                 userIcon.classList.remove('m-user__img_not_loaded');
                 userIcon.classList.add('m-user__img_' + sender.color);
-                userName.innerText = sender.name;
+                userName.innerText = "test";
             }
         });
     }
@@ -368,7 +376,7 @@ Message.prototype.renderMessage = function (message, setAsFirst) {
     }
 
     if (self.isFirstRead && message.status == 'read') {
-        elem.querySelector('.check').setAttribute('style', 'display : block');
+        //elem.querySelector('.check').setAttribute('style', 'display : block');
         self.isFirstRead = false;
     }
 
@@ -582,8 +590,8 @@ Message.prototype.setMessageStatus = function(data) {
                 }
             }
 
-            var checkIcon = messageElem.querySelector('.check');
-            checkIcon.setAttribute('style', 'display : block');
+            // var checkIcon = messageElem.querySelector('.check');
+            // checkIcon.setAttribute('style', 'display : block');
         }
         // if(messageElem !== undefined){
         //     var statusElem = messageElem.querySelector('.j-message__status');

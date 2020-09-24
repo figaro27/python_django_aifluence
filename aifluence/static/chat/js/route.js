@@ -163,23 +163,23 @@ router.on({
 
         }
 
-        document.addEventListener('visibilitychange', function() {
-            var currentDialog = dialogModule._cache[dialogId],
-                dialogType = currentDialog.type === 1 ? 'public' : 'chat';
+        // document.addEventListener('visibilitychange', function() {
+        //     var currentDialog = dialogModule._cache[dialogId],
+        //         dialogType = currentDialog.type === 1 ? 'public' : 'chat';
 
-            if (document.visibilityState !== 'visible') {
-                dialogType = currentDialog.type === 1 ? 'chat' : 'public';
-            }
+        //     if (document.visibilityState !== 'visible') {
+        //         dialogType = currentDialog.type === 1 ? 'chat' : 'public';
+        //     }
 
-            var tab = document.querySelector('.j-sidebar__tab_link[data-type="'+dialogType+'"]');
-            app.loadChatList(tab).then(function () {
-                if (document.visibilityState === 'visible'
-                    && window.location.href.match(/\/dialog\/[a-zA-Z0-9]+$/)
-                    && !window.location.href.match(/\/dialog\/create$/)) {
-                    dialogModule.renderMessages(dialogModule.dialogId);
-                }
-            });
-        });
+        //     var tab = document.querySelector('.j-sidebar__tab_link[data-type="'+dialogType+'"]');
+        //     app.loadChatList(tab).then(function () {
+        //         if (document.visibilityState === 'visible'
+        //             && window.location.href.match(/\/dialog\/[a-zA-Z0-9]+$/)
+        //             && !window.location.href.match(/\/dialog\/create$/)) {
+        //             dialogModule.renderMessages(dialogModule.dialogId);
+        //         }
+        //     });
+        // });
 
     },
     '/dialog/:dialogId/edit': {

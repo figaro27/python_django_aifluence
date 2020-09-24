@@ -21,6 +21,7 @@
     <input type="hidden" id="chat_session_token" value="{{ chat_session_token }}">
     <input type="hidden" id="chat_id" value="{{ chat_id }}">
     <input type="hidden" id="type" value="{{ type }}">
+    <input type="hidden" id="from_to" value="{{ from_to }}">
 
     <!-- Underscore templates  -->
     <script type="text/template" id="tpl_login">
@@ -91,10 +92,10 @@
                     <div class="sidebar__content">
                         <ul class="sidebar__tabs">
                             <li class="sidebar__tab">
-                                <a href="#" class="sidebar__tab_link j-sidebar__tab_link <% tabName === "chat" ? print('active') : '' %>" data-type="chat">chats</a>
+                                <a href="#" class="sidebar__tab_link j-sidebar__tab_link <% tabName === 'chat' ? print('active') : '' %>" data-type="chat">chats</a>
                             </li>
                             <li class="sidebar__tab">
-                                <a href="#" class="sidebar__tab_link j-sidebar__tab_link <% tabName === "public" ? print('active') : '' %>" data-type="public">public chats</a>
+                                <a href="#" class="sidebar__tab_link j-sidebar__tab_link <% tabName === 'public' ? print('active') : '' %>" data-type="public">public chats</a>
                             </li>
                             <li class="sidebar__tab m-sidebar__tab_new">
                                 <a href="#!/dialog/create" class="sidebar__tab_link j-sidebar__create_dialog m-sidebar__tab_link_new" data-type="create">
@@ -137,7 +138,8 @@
                 <span class="dialog__info">
                     <span class="dialog__name"><%- dialog.name %></span>
                     <span class=""><%- dialog.campaign_brief %></span>
-                    <span class="dialog__last_message j-dialog__last_message <%= dialog.attachment ? 'attachment' : ''%>"><%- dialog.last_message%></span>
+                    <span class="dialog__last_message j-dialog__last_message <%= dialog.attachment ? 'attachment' : ''%>"><%- dialog.last_message %>
+                    </span>
                 </span>
                 <span class="dialog_additional_info">
                     <span class="dialog__last_message_date j-dialog__last_message_date">
@@ -155,6 +157,9 @@
         <div class="content__title j-content__title j-dialog">
             <button class="open_sidebar j-open_sidebar"></button>
             <p class="dialog__title j-dialog__title"><% print(title) %></p>
+            <% if (from_to == "AI") { %>
+                <a class="btn btn-sm text-white bg-primary" id="open_offer_modal" data-id="<%- discussion_id %>" style="padding: 5px;"><i class="fa fa-plus"></i>Offer Contract</a>
+            <% } %>
             <div class="action_links">
                 <a href="#!/dialog/<%- _id %>/edit" class="add_to_dialog j-add_to_dialog <% type !== 2 ? print('hidden') : ''%>">
                     <i class="material-icons">person_add</i>
@@ -179,6 +184,62 @@
                     <button class="send_btn">send</button>
                 </div>
             </form>
+        </div>
+        <div id="offer_modal" class="modal fade" tabindex="-2" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <label for="id_contract_title">Title*</label> <br/>
+                        <input placeholder="" class="textarea form-control mb-2" id="id_contract_title"/>
+                            <div class="invalid-title invalid-feedback">
+                                This field is required!
+                            </div>
+                        <label for="id_contract_budget">Terms*</label> <br/>
+                            <textarea name="message" cols="500" rows="10" maxlength="4000" placeholder="" class="textarea form-control mb-2" id="id_contract_terms"></textarea>
+                            <div class="invalid-terms invalid-feedback">
+                                This field is required!
+                            </div>
+                        <label for="id_contract_budget">Budget* </label> <br/>
+                            {% if description.campaign.campaign_currency == 'usd' %}${% else %}€{% endif %} <input type="number" id="id_contract_budget"/>
+                            <div class="invalid-budget invalid-feedback">
+                                This field is required!
+                            </div>
+                            <div class="invalid-budget-number invalid-feedback">
+                                This field must be number!
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn text-white bg-primary" id="offer_btn" data-id="<%- discussion_id %>">Offer Contract</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="agreement_modal" class="modal fade" tabindex="-2" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                            <label for="id_contract_comment">Comment*</label> <br/>
+                            <textarea name="message" cols="500" rows="10" maxlength="4000" placeholder="" class="textarea form-control mb-2" id="id_contract_comment"></textarea>
+                            <div class="invalid-contract-agreement invalid-feedback">
+                                This field is required!
+                            </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-end">
+                        <button type="button" class="btn text-white bg-primary contract-agreement-btn" id="accept_contract_btn" data-id="">Accept</button>
+                        <button type="button" class="btn btn-secondary contract-agreement-btn" id="decline_contract_btn" data-id="">Decline</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </script>
 
@@ -232,20 +293,22 @@
     </script>
 
     <script type="text/template" id="tpl_message">
+
             <div class="message__wrap" id="<%= message.id %>" data-status="<%= message.status %>">
                 <% if (!message.is_sent) { %>
                 <span class="message__avatar m-user__img_<%= sender ? sender.color : 'not_loaded' %>">
                     <i class="material-icons">account_circle</i>
                 </span>
+                 <!-- <p class="message__sender_name"><%- sender ? sender.name : 'unknown user (' + message.sender_id + ')' %></p> -->
+
                 <% } %>
                 <div class="message__content">
                     <div class="message__sender_and_status">
                         <% if (!message.is_sent) { %>
                         <div class="message__timestamp">
-                            <%= message.date_sent %>
+                            <%- sender ? sender.name : 'unknown user (' + message.sender_id + ')' %> - <%= message.date_sent %>
                         </div>
                         <% } %>
-                        <!-- <p class="message__sender_name"><%- sender ? sender.name : 'unknown user (' + message.sender_id + ')' %></p> -->
                         <% if (message.is_sent) { %>
                         <div class="message__timestamp">
                             <%= message.date_sent %>
@@ -256,7 +319,10 @@
                     <div class="message__text_and_date">
                         <div class="message__text_wrap">
                             <% if (message.message) { %>
-                            <p class="message__text <% message.is_sent ? print('message__text__sent') : print('message__text__received') %>"><%= message.message %></p>
+                            <p class="message__text <% message.is_sent ? print('message__text__sent') : print('message__text__received') %>"><%
+                                print(message.message)
+                                %>
+                            </p>
                             <% } %>
                             <% if (message.attachments.length) { %>
                             <div class="message__attachments_wtap">
@@ -273,11 +339,11 @@
                     <span class="message__avatar m-user__img_<%= sender ? sender.color : 'not_loaded' %>">
                         <i class="material-icons">account_circle</i>
                     </span>
-                    <div style="flex : 1 0;"></div>
+                    <!-- <div style="flex : 1 0;"></div>
                     <p class="message__status j-message__status" style="display : none;">><%= message.status %></p>
                     <span class="message__avatar">
                         <i class="material-icons check">remove_red_eye</i>
-                    </span>
+                    </span> -->
                 </div>
                 <% } %>
             </div>
@@ -368,6 +434,128 @@
                 <p class="loading__description">Loading...</p>
             </div>
         </div>
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $.ajaxSetup({
+                headers: { 'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val() }
+            });
+            $('body').on('click', '#open_offer_modal', function(){
+                $(".invalid-terms").css('display', 'none');
+                $(".invalid-budget").css('display', 'none');
+                $(".invalid-budget-number").css('display', 'none');
+                $(".invalid-title").css('display', 'none');
+                $("#id_contract_title").val("")
+                $("#id_contract_terms").val("")
+                $("#id_contract_budget").val("")
+                $("#offer_modal").modal('show');
+            });
+            $("body").on('click', "#offer_btn", function(){
+                if ($("#id_contract_title").val() == "") {
+                    $(".invalid-title").css('display', 'block');
+                    return false;
+                }
+
+                if ($("#id_contract_terms").val() == "") {
+                    $(".invalid-terms").css('display', 'block');
+                    return false;
+                }
+
+                if ($("#id_contract_budget").val() == "") {
+                    $(".invalid-budget").css('display', 'block');
+                    return false;
+                }
+
+                if (isNaN($("#id_contract_budget").val())) {
+                    $(".invalid-budget-number").css('display', 'block');
+                    return false;
+                }
+
+                var currency = '€';
+                {% if description.campaign.campaign_currency == 'usd' %}
+                    currency = '$';
+                {% else %}
+                    currency = '€';
+                {% endif %}
+
+                var contract_offer_message = 'Contract <span class="text-info">' + $("#id_contract_title").val() + '</span> offered!<br/><br/>Terms: ' +
+                                            $("#id_contract_terms").val() + '<br/> Budget: ' +
+                                            currency + $("#id_contract_budget").val();
+                $.ajax({
+                    url: "/messages/channels/create",
+                    method: "post",
+                    data: {
+                        'discussion_id': $('#open_offer_modal').attr('data-id'),
+                        'dialog_id': dialogModule.dialogId,
+                        'content': contract_offer_message,
+                        'title': $("#id_contract_title").val(),
+                        'terms': $("#id_contract_terms").val(),
+                        'type': 'CO',
+                        'budget': $("#id_contract_budget").val(),
+                    },
+                    success: function(data) {
+                        $("#id_message").val("");
+                        $('#send_btn').addClass('disabled');
+                        // $(".message-body").html(data);
+                        // $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+                        $("#offer_modal").modal('hide');
+                        var contractId = data;
+                        var messageBody = contract_offer_message + '<br/>You can accept or decline this offer <a href="javascript:console.log("test")" onclick="contract_agree(this)" data-id=' + contractId + '>here</a>!';
+
+                        messageModule.submitSendMessage(dialogModule.dialogId, messageBody, true);
+                        // document.forms.send_message.message_feald.focus();
+                    }
+                });
+
+            });
+            $('body').on('click', '.contract-agreement-btn', function() {
+                if ($("#id_contract_comment").val() == "" ) {
+                    $(".invalid-contract-agreement").css('display', 'block');
+                    return false;
+                }
+
+                var agreement = 1;
+                if ($(this).attr('id') == 'decline_contract_btn') {
+                    agreement = 0;
+                }
+
+                $.ajax({
+                    url: "/campaigns/contracts/offer/" + $(this).attr('data-id') + "/agreement",
+                    data: {
+                        'agreement' : agreement,
+                        'comment' : $("#id_contract_comment").val(),
+                        // 'message_id' : $(this).attr('data-message'),
+                    },
+                    method: 'post',
+                    success: function(data){
+                        $("#agreement_modal").modal('hide');
+                        // $(".message-body").html(data);
+                        // $(".scroll-div").scrollTop($(".scroll-div").prop("scrollHeight"));
+
+                        var messageBody = data;
+                        messageModule.submitSendMessage(dialogModule.dialogId, messageBody, true);
+
+                        // document.forms.send_message.message_feald.focus();
+                    }
+                })
+            });
+        });
+        function contract_agree(e) {
+            if (document.querySelector('#from_to').value != 'IA') {
+                // app.isDashboardLoaded = false;
+                return;
+            }
+            var contract_id = $(e).data("id");
+            // var message_id = $(e).parent().attr('data-id');
+            $("#accept_contract_btn").attr("data-id", contract_id);
+            $("#decline_contract_btn").attr("data-id", contract_id);
+            // $("#accept_contract_btn").attr("data-message", message_id);
+            // $("#decline_contract_btn").attr("data-message", message_id);
+            $(".invalid-contract-agreement").css('display', 'none');
+            $("#id_contract_comment").val("");
+            $("#agreement_modal").modal('show');
+        }
     </script>
 
     <script src="{% static 'chat/js/constants.js' %}" defer></script>

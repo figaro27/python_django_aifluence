@@ -61,6 +61,7 @@ Dialog.prototype.loadDialogs = function (type) {
     }
 
     return new Promise(function(resolve, reject){
+
         if (!app.checkInternetConnection()) {
             reject(new Error('no internet connection'));
         }
@@ -82,8 +83,59 @@ Dialog.prototype.loadDialogs = function (type) {
             var dialogs = resDialogs.items;
 
             _.each(dialogs, function (dialog) {
-                self._cache[dialog._id] = helpers.compileDialogParams(dialog);
-                self.renderDialog(self._cache[dialog._id]);
+
+                var dialog_type = document.querySelector('#type').value
+
+                if(dialog_type == dialog.data.type && dialog.data.type == 'Client-Agent'){
+                    $.ajax({
+                        url: "/campaigns/campaign/" + dialog.data.campaign_id,
+                        data: {
+
+                        },
+                        method: 'get',
+                        success: function(data){
+                            if(data == 'true'){
+                                self._cache[dialog._id] = helpers.compileDialogParams(dialog);
+                                self.renderDialog(self._cache[dialog._id]);
+                            }
+                            else{
+                                QB.chat.dialog.delete(dialog['_id'], function(err) {
+                                    if (err) {
+                                        console.error(err);
+                                    } else {
+                                        console.log("Delete")
+                                    }
+                                });
+                            }
+                        }
+                    })
+                }
+                if(dialog_type == dialog.data.type && dialog.data.type == 'Agent-Influencer'){
+                    if(dialog.data.discussion_id){
+                        $.ajax({
+                            url: "/campaigns/discussion/" + dialog.data.discussion_id,
+                            data: {
+
+                            },
+                            method: 'get',
+                            success: function(data){
+                                if(data == 'true'){
+                                    self._cache[dialog._id] = helpers.compileDialogParams(dialog);
+                                    self.renderDialog(self._cache[dialog._id]);
+                                }
+                                else{
+                                    QB.chat.dialog.delete(dialog['_id'], function(err) {
+                                        if (err) {
+                                            console.error(err);
+                                        } else {
+                                            console.log("Delete")
+                                        }
+                                    });
+                                }
+                            }
+                        })
+                    }
+                }
             });
 
             if (self.dialogId) {
@@ -235,7 +287,16 @@ Dialog.prototype.renderMessages = function (dialogId) {
 
     if (!document.forms.send_message) {
         helpers.clearView(this.content);
-        self.content.innerHTML = helpers.fillTemplate('tpl_conversationContainer', {title: dialog.campaign_detail, _id: dialog._id, type: dialog.type});
+        self.content.innerHTML = helpers.fillTemplate(
+            'tpl_conversationContainer',
+            {
+                title: dialog.campaign_detail,
+                _id: dialog._id,
+                type: dialog.type,
+                from_to: document.querySelector('#from_to').value,
+                discussion_id: dialog.discussion_id
+            }
+        );
         self.messagesContainer = document.querySelector('.j-messages');
         self.attachmentsPreviewContainer = self.content.querySelector('.j-attachments_preview');
         self.dialogTitle = document.querySelector('.j-dialog__title');
@@ -258,8 +319,8 @@ Dialog.prototype.renderMessages = function (dialogId) {
             messageModule.sendStopTypingStatus(self.prevDialogId);
         }
 
-        // self.dialogTitle.innerText = dialog.name;
         self.dialogTitle.innerHTML = dialog.campaign_detail;
+        document.querySelector('#open_offer_modal').setAttribute('data-id', dialog.discussion_id);
 
         if(dialog.type === CONSTANTS.DIALOG_TYPES.CHAT || dialog.type === CONSTANTS.DIALOG_TYPES.GROUPCHAT) {
             if (dialog && dialog.messages.length) {

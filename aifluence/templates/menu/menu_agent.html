@@ -6,16 +6,16 @@
     <li class="nav-item {% if menu == 'contracts' %} active {% endif %}">
         <a class="nav-link" href="{% url 'contract_list' %}">Contracts</a>
     </li>
-    <li class="nav-item {% if menu == 'influencer_messages' %} active {% endif %}">
+    <!-- <li class="nav-item {% if menu == 'influencer_messages' %} active {% endif %}">
         <a class="nav-link position-relative" href="{% url 'message_list' %}">Influencer Messages{% if numOfInfluencerMessage > 0 %}<span class="custom-notification text-white position-absolute" id="discussion_notify">{{numOfInfluencerMessage}}</span>{% endif %}</a>
     </li>
     <li class="nav-item {% if menu == 'client_messages' %} active {% endif %}">
             <a class="nav-link" href="{% url 'client_message_list' %}">Client Messages{% if numOfClientMessage > 0 %}<span class="custom-notification position-absolute text-white" id="campaign_notify">{{numOfClientMessage}}</span>{% endif %}</a>
+    </li> -->
+    <li class="nav-item {% if menu == 'AI_chat' %} active {% endif %}">
+        <a class="nav-link position-relative" href="{% url 'AI_chat' %}">Influencer Chat</a>
     </li>
-    <li class="nav-item {% if menu == 'influencer_chat' %} active {% endif %}">
-        <a class="nav-link position-relative" href="{% url 'AI_chat' %}">Influencer Chat{% if numOfInfluencerMessage > 0 %}<span class="custom-notification text-white position-absolute" id="discussion_notify">{{numOfInfluencerMessage}}</span>{% endif %}</a>
-    </li>
-    <li class="nav-item {% if menu == 'client_chat' %} active {% endif %}">
-        <a class="nav-link" href="{% url 'AC_chat' %}">Client Chat{% if numOfClientMessage > 0 %}<span class="custom-notification position-absolute text-white" id="campaign_notify">{{numOfClientMessage}}</span>{% endif %}</a>
+    <li class="nav-item {% if menu == 'AC_chat' %} active {% endif %}">
+        <a class="nav-link" href="{% url 'AC_chat' %}">Client Chat</a>
 </li>
 </ul>

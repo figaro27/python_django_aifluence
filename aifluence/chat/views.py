@@ -18,7 +18,7 @@ from aifluence.constants import QB_CONFIG
 
 # Create your views here.
 
-def CA_chat(request, *args, **kwargs):
+def AC_chat(request, *args, **kwargs):
     chat_session_token = request.session['chat_session_token']
     chat_id = request.session['chat_id']
     return render(
@@ -28,7 +28,8 @@ def CA_chat(request, *args, **kwargs):
             'username': request.session['username'],
             'chat_session_token': chat_session_token,
             'chat_id' : chat_id,
-            'type' : QB_CONFIG['chat']['dialog_custom_type']['CA']
+            'type' : QB_CONFIG['chat']['dialog_custom_type']['CA'],
+            'menu' : 'AC_chat'
         }
     )
 
@@ -42,6 +43,25 @@ def AI_chat(request, *args, **kwargs):
             'username': request.session['username'],
             'chat_session_token': chat_session_token,
             'chat_id' : chat_id,
-            'type' : QB_CONFIG['chat']['dialog_custom_type']['AI']
+            'type' : QB_CONFIG['chat']['dialog_custom_type']['AI'],
+            'menu' : 'AI_chat',
+            'from_to' : 'AI'
         }
     )
+
+def IA_chat(request, *args, **kwargs):
+    chat_session_token = request.session['chat_session_token']
+    chat_id = request.session['chat_id']
+    return render(
+        request,
+        'chat/index.html',
+        {
+            'username': request.session['username'],
+            'chat_session_token': chat_session_token,
+            'chat_id' : chat_id,
+            'type' : QB_CONFIG['chat']['dialog_custom_type']['AI'],
+            'menu' : 'IA_chat',
+            'from_to' : 'IA'
+        }
+    )
+

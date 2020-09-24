@@ -11,7 +11,7 @@ from .models import Invitation
 from users.models import Influencer
 from users.forms import UserCreationForm
 from campaign.views import create_discussion
-from utils.chat import create_dialog
+from utils.chat import create_dialog, send_first_message
 import aifluence.constants as CONSTANTS
 # Create your views here.
 from .forms import InvitationForm
@@ -77,6 +77,7 @@ def invitation_accepted(request, invitation_key=None):
             users = Influencer.objects.filter(twitter_account=invitation.influencer_account)
 
         if (users.count() > 0):
+            discussion_id = create_discussion(invitation, users.first())
             # QB create group dialog of agent and influencer
             dialog_name = request.session['username'] + '__' + invitation.campaign.agent.username + '__' + str(invitation.campaign.id)
             cam_brand_category = ''
@@ -86,13 +87,20 @@ def invitation_accepted(request, invitation_key=None):
             for location in invitation.campaign.location:
                 cam_location = cam_location + location + ' '
             campaign_detail = '<span class=\'campaign_detail_key\'>Brand Name: </span>' + invitation.campaign.brand_name + '<br><span class=\'campaign_detail_key\'>Brand Category: </span>' + cam_brand_category + '<br><span class=\'campaign_detail_key\'>Brand Attributes: </span>' + invitation.campaign.brand_attributes + '<br><span class=\'campaign_detail_key\'>Key Selling Point: </span>' + invitation.campaign.key_selling_point + '<br><span class=\'campaign_detail_key\'>Brief: </span>' + invitation.campaign.campaign_brief + '<br><span class=\'campaign_detail_key\'>Location: </span>' + cam_location + '<br><span class=\'campaign_detail_key\'>Budget: </span>' + str(invitation.campaign.campaign_budget)
-            asyncio.run(create_dialog(request.session['chat_session_token'], dialog_name, request.session['username'], invitation.campaign.agent.chat_id, CONSTANTS.QB_CONFIG['chat']['dialog_custom_type']['AI'], invitation.campaign.id, invitation.campaign.campaign_brief, campaign_detail))
-            # asyncio.run(create_dialog(request.session['chat_session_token'], request.session['username'], invitation.campaign.agent.chat_id, CONSTANTS.QB_CONFIG['chat']['dialog_name']['AI']))
-            discussion_id = create_discussion(invitation, users.first())
+
+            dialog = asyncio.run(create_dialog(request.session['chat_session_token'],
+                dialog_name, request.session['username'],
+                invitation.campaign.agent.chat_id,
+                CONSTANTS.QB_CONFIG['chat']['dialog_custom_type']['AI'],
+                invitation.campaign.id, invitation.campaign.campaign_brief, campaign_detail, discussion_id))
+
+            send_first_message(invitation.campaign.agent.chat_id, dialog['_id'], "Thanks for your accept")
+
             if request.user.is_authenticated:
-                return redirect('/messages/?id=' + str(discussion_id) + '&invited=true')
+                return redirect('/chat/IA_chat')
             else:
                 return redirect('/login?discussion_id='+str(discussion_id))
+
         else:
             return redirect('/login?invitation_key='+invitation.invitation_key)
     else:

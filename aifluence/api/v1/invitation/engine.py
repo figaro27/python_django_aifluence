@@ -39,7 +39,7 @@ class CustomizedInstagramAPI(InstagramAPI):
             }
         ]
 
-        # Check if URLS are present in text 
+        # Check if URLS are present in text
 
         urls = self.find_urls(text)
 
@@ -84,7 +84,7 @@ class CustomizedInstagramAPI(InstagramAPI):
             self.LastJson = json.loads(response.text)
             return True
         else:
-            print ("Request return " + str(response.status_code) + " error!")
+           # print ("Request return " + str(response.status_code) + " error!")
             # for debugging
             try:
                 self.LastResponse = response
@@ -115,14 +115,15 @@ def send_instagram_invitation(influencer_account, campaign_id, invitation_key):
     time.sleep(1)
     API = CustomizedInstagramAPI(username, pwd)
     API.login()
-    
-    respJSON = API.get_user_info(influencer_account).json()    
+
+    print("log-------------")
+    respJSON = API.get_user_info(influencer_account).json()
+
     influencer_user_id = str(respJSON['users'][0].get("user").get("pk"))
     invitation_message = "Dear " + str(respJSON['users'][0].get("user").get("full_name")) + ",\n"
     invitation_message += "We invite you to the marketing campaign you'd be interested in.\n"
     invitation_message += "Please signup our platform using below url:\n"
     invitation_message += "http://local.aifluence.com/" + "invitations/" + invitation_key
-
     res = API.direct_message(invitation_message, [influencer_user_id])
     API.logout()
     return res
