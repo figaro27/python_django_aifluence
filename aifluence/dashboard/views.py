@@ -17,7 +17,7 @@ def dashboard(request):
         else:
             if not influencer_profiles.first().instagram_account and not influencer_profiles.first().facebook_account and not influencer_profiles.first().twitter_account:
                 return redirect('influencer_profile')
-    
+
     context = {
         'menu': 'home'
     }
@@ -41,4 +41,3 @@ def get_num_notification(request):
     if not request.user.is_influencer:
         context.update({'numOfClientMessage': Message.objects.filter(sent_to=request.user,read_status=False,discussion__isnull=True).count()})
     return context
-    

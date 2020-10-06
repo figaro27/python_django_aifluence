@@ -46,8 +46,8 @@ class InviteInfluencerView(APIView):
                 invitations = Invitation.objects.filter(client=request.user, campaign__id=campaign_id, analysis=influencer)
 
                 if invitations.count() > 0:
-                    invitations.update(status='SE', last_sent_at=datetime.now())
-                    code = 'success'
+                    # invitations.update(status='SE', last_sent_at=datetime.now())
+                    # code = 'success'
 
                     if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitations.first().invitation_key):
                         invitations.update(status='SE', last_sent_at=datetime.now())
@@ -66,10 +66,10 @@ class InviteInfluencerView(APIView):
                     invitation.analysis = influencer
                     invitation.save()
 
-                    invitation.status = 'SE'
-                    invitation.last_sent_at = datetime.now()
-                    invitation.save()
-                    code = 'success'
+                    # invitation.status = 'SE'
+                    # invitation.last_sent_at = datetime.now()
+                    # invitation.save()
+                    # code = 'success'
 
                     if send_invitation(influencer.influencer_account, influencer.influencer_platform, campaign_id, invitation.invitation_key):
                         invitation.status = 'SE'

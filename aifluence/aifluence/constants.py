@@ -771,9 +771,9 @@ POST_STYLES = ["Image", "Video", "Sidebar"]
 
 QB_CONFIG = {
     'credentials': {
-        'app_id': '85685',
-        'auth_key': 'NrRgdPEvaC4cUk7',
-        'auth_secret': 'ypkT6TM9fBqNvxn'
+        'app_id': '86305',
+        'auth_key': 'efXe9hgKmYgJnty',
+        'auth_secret': '4nzQvcht8Y7KsrP'
     },
     'url' : {
         'base' : 'https://api.quickblox.com/',

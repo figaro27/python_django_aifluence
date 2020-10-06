@@ -20,7 +20,9 @@ def custom_login(request):
             password = request.POST['password']
 
             user = EmailOrUsernameModelBackend.authenticate(request, username=username, password=password)
+
             if user is not None:
+                username = user.username
                 # QB user login
                 chat_session_token = asyncio.run(create_session())
                 chat_id = asyncio.run(login_chat(chat_session_token, username))
@@ -30,6 +32,8 @@ def custom_login(request):
                 request.session['password'] = password
                 request.session['chat_id'] = chat_id
                 request.session['chat_session_token'] = chat_session_token
+
+                print('-------', request.session['username'] )
 
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 if request.POST.get('invitation_key'):
@@ -68,7 +72,6 @@ def register(request):
                 return redirect('/login?invitation_key=' + request.POST.get('invitation_key'))
             return redirect('custom_login')
         else:
-            print('-----------------------')
             return redirect('register')
     else:
         regform = UserCreationForm()

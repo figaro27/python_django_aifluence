@@ -37,19 +37,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.core.wsgi',
+
     'bootstrap',
     'fontawesome',
     'widget_tweaks',
     'crispy_forms',
     'rest_framework',
-    
+
     'users',
+    'chatting',
     'invitation',
     'dashboard',
     'campaign',
     'utils',
     'influencer',
     'message',
+
 ]
 
 MIDDLEWARE = [
@@ -91,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'aifluence',
         'USER': 'aifluence',
-        'PASSWORD': 'ericAifluence',
+        'PASSWORD': 'aifluence',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -139,7 +143,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
+    os.path.normpath(os.path.join(BASE_DIR, "static")),
 ]
 
 MEDIA_ROOT =  os.path.join(BASE_DIR, 'uploads')

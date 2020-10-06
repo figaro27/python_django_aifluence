@@ -116,14 +116,13 @@ def send_instagram_invitation(influencer_account, campaign_id, invitation_key):
     API = CustomizedInstagramAPI(username, pwd)
     API.login()
 
-    print("log-------------")
     respJSON = API.get_user_info(influencer_account).json()
 
     influencer_user_id = str(respJSON['users'][0].get("user").get("pk"))
     invitation_message = "Dear " + str(respJSON['users'][0].get("user").get("full_name")) + ",\n"
     invitation_message += "We invite you to the marketing campaign you'd be interested in.\n"
     invitation_message += "Please signup our platform using below url:\n"
-    invitation_message += "http://local.aifluence.com/" + "invitations/" + invitation_key
+    invitation_message += "http://35.225.216.94/" + "invitations/" + invitation_key
     res = API.direct_message(invitation_message, [influencer_user_id])
     API.logout()
     return res

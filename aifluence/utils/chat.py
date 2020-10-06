@@ -157,7 +157,7 @@ async def get_dialogs(session_token, discussion_id):
     }
     res = requests.get(url, headers = headers).json()
     dialogs = []
-    print('res----------------------------', res)
+
     for item in res['items']:
         if item['data']['discussion_id'] == discussion_id:
             return item

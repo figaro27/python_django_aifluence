@@ -24,7 +24,7 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', TemplateView.as_view(template_name='layouts/landing.html'), name='home'),
-    path('login', custom_login, name='custom_login'),
+    path('accounts/login/', custom_login, name='custom_login'),
     path('logout/', LogoutView.as_view(template_name='registration/login.html'), name='logout'),
     path('register/', register, name='register'),
     path('influencer/profile', influencer_profile, name='influencer_profile'),
@@ -33,7 +33,7 @@ urlpatterns = [
     path('campaigns/', include('campaign.urls')),
     path('utils/', include('utils.urls')),
     path('messages/', include('message.urls')),
-    path('chat/', include('chat.urls')),
+    path('chatting/', include('chatting.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('api/', include('api.urls', namespace='api')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

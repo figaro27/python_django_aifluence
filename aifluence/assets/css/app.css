@@ -1,0 +1,133 @@
+
+.page {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: center;
+    justify-content: center;
+    min-height: 100%;
+    height: 100vh;
+}
+
+.landing-page {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-pack: center;
+  justify-content: center;
+  min-height: 100%;
+  height: 100vh;
+  background-color: #16bbb4;
+}
+
+.btn-userrole.active {
+  background-color: #148c3a !important;
+  border-color: #148c3a !important;
+}
+
+.avatar {
+  width: 2rem;
+  height: 2rem;
+  line-height: 2rem;
+  border-radius: 50%;
+  display: inline-block;
+  background: #ced4da no-repeat center/cover;
+  position: relative;
+  text-align: center;
+  color: #868e96;
+  font-weight: 600;
+  vertical-align: bottom;
+  font-size: .875rem;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.top-header{
+  box-shadow: -3px -1px 5px 5px #8eb58e;
+}
+
+label {
+  color: #3f6780;
+}
+
+.status-span {
+  width: 80px;
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.discussion-active {
+  color: green;
+}
+
+.channel-user {
+  line-height: 40px;
+  width: 40px;
+  height: 40px;
+  background-color: #c7c3c3;
+  font-size: 15px;
+  text-align: center;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+span.media-status {
+  width: 140px;
+  border-radius: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+.landing-body {
+  height: calc(100vh - 75px);
+  background-color: #16bbb4;
+}
+
+.landing-body-content {
+  height: 500px;
+  background-image: url('/static/img/landing.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.landing-title {
+  font-size: 40px;
+  font-weight: bold;
+  color: azure;
+}
+
+.custom-notification {
+  background-color: #14881c;
+  display: inline-block;
+  padding: 3px;
+  font-size: smaller;
+  font-weight: bolder;
+  line-height: 0.7;
+  border-radius: 100%;
+  text-align: center;
+}
+
+.message {
+  border-radius: 20px;
+  display: inline-block;
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.received-message {
+  background-color: lavender;
+}
+
+.sent-message {
+  background-color: rgba(0,123,255,.25);
+}
+
+.message-campaign-brief {
+  color: teal;
+}
