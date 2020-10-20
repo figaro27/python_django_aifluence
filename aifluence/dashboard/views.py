@@ -7,7 +7,7 @@ from campaign.models import Contract
 from invitation.models import Invitation
 from message.models import Message
 # Create your views here.
-@login_required
+@login_required(login_url='/login')
 def dashboard(request):
     if request.user.is_influencer:
         influencer_profiles = Influencer.objects.filter(user=request.user)

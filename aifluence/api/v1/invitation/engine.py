@@ -5,6 +5,7 @@ import json
 import requests
 import time
 
+InstagramInstance = None
 class CustomizedInstagramAPI(InstagramAPI):
     def find_urls(self, text):
         regex = r"((?:(http|https|Http|Https|rtsp|Rtsp):\/\/(?:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,64}(?:\:(?:[a-zA-Z0-9\$\-\_\.\+\!\*\'\(\)\,\;\?\&\=]|(?:\%[a-fA-F0-9]{2})){1,25})?\@)?)?((?:(?:[a-zA-Z0-9\_][a-zA-Z0-9\_\-]{0,64}\.)+(?:(?:aero|arpa|asia|a[cdefgilmnoqrstuwxz])|(?:biz|b[abdefghijmnorstvwyz])|(?:cat|com|coop|c[acdfghiklmnoruvxyz])|d[ejkmoz]|(?:edu|e[cegrstu])|f[ijkmor]|(?:gov|g[abdefghilmnpqrstuwy])|h[kmnrtu]|(?:info|int|i[delmnoqrst])|(?:jobs|j[emop])|k[eghimnprwyz]|l[abcikrstuvy]|(?:mil|mobi|museum|m[acdeghklmnopqrstuvwxyz])|(?:name|net|n[acefgilopruz])|(?:org|om)|(?:pro|p[aefghklmnrstwy])|qa|r[eosuw]|s[abcdeghijklmnortuvyz]|(?:tel|travel|t[cdfghjklmnoprtvwz])|u[agksyz]|v[aceginu]|w[fs]|y[et]|z[amw]))|(?:(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9])\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[1-9]|0)\.(?:25[0-5]|2[0-4][0-9]|[0-1][0-9]{2}|[1-9][0-9]|[0-9])))(?:\:\d{1,5})?)(\/(?:(?:[a-zA-Z0-9\;\/\?\:\@\&\=\#\~\-\.\+\!\*\'\(\)\,\_])|(?:\%[a-fA-F0-9]{2}))*)?(?:\b|$)"
@@ -109,22 +110,34 @@ class CustomizedInstagramAPI(InstagramAPI):
         return self.s.get(url)
 
 def send_instagram_invitation(influencer_account, campaign_id, invitation_key):
-    username = 'wilsonzh1011'
+    # username = 'Aifluencetest'
+    # pwd = 'Aifluencepass123'
+
+    username = 'naldokan318'
     pwd = 'Asdfg@123#'
 
     time.sleep(1)
-    API = CustomizedInstagramAPI(username, pwd)
-    API.login()
+    global InstagramInstance
+    if InstagramInstance == None:
+        InstagramInstance = CustomizedInstagramAPI(username, pwd)
+        print('InstagramInstance-----------', InstagramInstance)
+        InstagramInstance.login()
+
+    API = InstagramInstance
+    print('instance-----------', API)
 
     respJSON = API.get_user_info(influencer_account).json()
+
+    print('------------------', respJSON)
 
     influencer_user_id = str(respJSON['users'][0].get("user").get("pk"))
     invitation_message = "Dear " + str(respJSON['users'][0].get("user").get("full_name")) + ",\n"
     invitation_message += "We invite you to the marketing campaign you'd be interested in.\n"
     invitation_message += "Please signup our platform using below url:\n"
-    invitation_message += "http://35.225.216.94/" + "invitations/" + invitation_key
+    invitation_message += "https://aifluenceplatform.com/" + "invitations/" + invitation_key
     res = API.direct_message(invitation_message, [influencer_user_id])
-    API.logout()
+
+
     return res
 
 def send_invitation(influencer_account, influencer_platform, campaign_id, invitation_key):

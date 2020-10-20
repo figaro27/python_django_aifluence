@@ -97,7 +97,7 @@ def invitation_accepted(request, invitation_key=None):
             send_first_message(invitation.campaign.agent.chat_id, dialog['_id'], "Thanks for your accept")
 
             if request.user.is_authenticated:
-                return redirect('/chat/IA')
+                return redirect('/chatting/IA')
             else:
                 return redirect('/login?discussion_id='+str(discussion_id))
 

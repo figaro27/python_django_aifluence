@@ -28,12 +28,11 @@ def custom_login(request):
                 chat_id = asyncio.run(login_chat(chat_session_token, username))
 
                 request.session.clear()
+                username = user.username
                 request.session['username'] = username
                 request.session['password'] = password
                 request.session['chat_id'] = chat_id
                 request.session['chat_session_token'] = chat_session_token
-
-                print('-------', request.session['username'] )
 
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 if request.POST.get('invitation_key'):
